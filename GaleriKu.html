@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="id" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeri Karya Digital</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="dflip/css/dflip.min.css" rel="stylesheet" type="text/css">
+    <link href="dflip/css/themify-icons.css" rel="stylesheet" type="text/css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="dflip/js/dflip.min.js" type="text/javascript"></script>
+
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+      }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+    <style>
+        .fade-in { animation: fadeIn 0.6s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .loading-spinner { border: 4px solid rgba(0, 0, 0, 0.1); border-left-color: #6d28d9; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .clamp-1, .clamp-2, .clamp-3 { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+        .clamp-1 { -webkit-line-clamp: 1; } .clamp-2 { -webkit-line-clamp: 2; } .clamp-3 { -webkit-line-clamp: 3; }
+        .category-btn, .page-btn { transition: all 0.2s ease-in-out; }
+        .category-btn.active { background-color: #6d28d9; color: white; transform: scale(1.05); }
+        .page-btn { border: 1px solid; }
+        .page-btn.active { background-color: #6d28d9; color: white; border-color: #6d28d9; }
+        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .rating-star { color: #d1d5db; transition: color 0.2s, transform 0.2s; cursor: pointer; display: inline-block; }
+        .rating-star:hover { transform: scale(1.2); }
+        .rating-star.filled { color: #facc15; }
+
+        /* CSS untuk Efek Glitch */
+        @keyframes glitch-shake {
+          0% { transform: translate(0); }
+          25% { transform: translate(2px, -3px); }
+          50% { transform: translate(-4px, 2px); }
+          75% { transform: translate(3px, 4px); }
+          100% { transform: translate(0); }
+        }
+        @keyframes glitch-text-clip {
+          0%, 100% { clip-path: inset(45% 0 50% 0); }
+          25% { clip-path: inset(20% 0 10% 0); }
+          50% { clip-path: inset(80% 0 5% 0); }
+          75% { clip-path: inset(50% 0 45% 0); }
+        }
+        .glitch-text {
+          font-size: 6rem;
+          font-weight: bold;
+          position: relative;
+          animation: glitch-shake 0.4s infinite;
+        }
+        .glitch-text::before, .glitch-text::after {
+          content: attr(data-text);
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: black;
+          overflow: hidden;
+        }
+        .glitch-text::before {
+          left: 2px;
+          text-shadow: -2px 0 #00ff00;
+          animation: glitch-text-clip 2s infinite linear alternate-reverse;
+        }
+        .glitch-text::after {
+          left: -2px;
+          text-shadow: -2px 0 #00ffff, 2px 2px #ff00ff;
+          animation: glitch-text-clip 3s infinite linear alternate-reverse;
+        }
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            animation: scan-line-anim 2s linear infinite;
+        }
+        @keyframes scan-line-anim {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-200">
+
+    <header class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" id="homeBtn" class="flex items-center space-x-3"><i class="fas fa-book-sparkles text-3xl text-violet-600"></i><h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Galeri Karya</h1></a>
+            <div class="flex items-center space-x-5">
+                <button id="promptNameAgainBtn" class="hidden bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-300 px-4 py-2 rounded-full text-sm font-medium hover:bg-violet-200">
+                    <i class="fas fa-pencil mr-2"></i>Tulis Namamu
+                </button>
+                <button id="darkModeToggle" title="Ubah Tema" class="text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400"><i id="moonIcon" class="fas fa-moon text-xl"></i><i id="sunIcon" class="fas fa-sun text-xl hidden"></i></button>
+                <button id="profileBtn" title="Tentang Penulis" class="text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400"><i class="fas fa-user-pen text-xl"></i></button>
+                <button id="adminBtn" title="Ruang Kreasi" class="text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400"><i class="fas fa-feather-pointed text-xl"></i></button>
+                <button id="logoutBtn" class="hidden bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 text-sm font-medium"><i class="fas fa-right-from-bracket mr-2"></i>Keluar</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-10">
+        <div id="homePage" class="fade-in">
+            <div class="text-center mb-8">
+                <h2 class="text-5xl font-extrabold text-gray-900 dark:text-white mb-3">
+                    <span id="welcomeGreeting">Selamat Datang</span>, <span id="visitorName" class="text-violet-600 dark:text-violet-400">Kawan</span>!
+                </h2>
+                <p id="welcomeSubheading" class="text-lg text-gray-600 dark:text-gray-300">Temukan dunia baru dalam setiap halaman cerita.</p>
+                <div class="mt-6 relative w-full max-w-lg mx-auto">
+                    <input type="text" id="searchInput" placeholder="Cari judul..." class="w-full px-5 py-3 pl-12 border rounded-full focus:ring-2 focus:ring-violet-500 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600">
+                    <i class="fas fa-search absolute top-1/2 -translate-y-1/2 left-5 text-gray-400"></i>
+                </div>
+            </div>
+            <div id="categoryFilters" class="flex justify-center flex-wrap gap-2 mb-10">
+                <button class="category-btn active bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full font-medium" data-category="Semua">Semua</button>
+                <button class="category-btn bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full font-medium" data-category="Fiksi">Fiksi</button>
+                <button class="category-btn bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full font-medium" data-category="Puisi">Puisi</button>
+                <button class="category-btn bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full font-medium" data-category="Cerpen">Cerpen</button>
+                <button class="category-btn bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full font-medium" data-category="Non-Fiksi">Non-Fiksi</button>
+                <button class="category-btn bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-full font-medium" data-category="Lainnya">Lainnya</button>
+            </div>
+            <div id="storyCatalog" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 min-h-[300px]"></div>
+            <div id="paginationControls" class="mt-12 flex justify-center items-center space-x-2"></div>
+            <div id="loadingState" class="text-center py-20 hidden"><div class="loading-spinner mx-auto mb-4"></div><p>Memuat cerita...</p></div>
+            <div id="emptyState" class="hidden text-center py-20 bg-gray-100 dark:bg-gray-800 rounded-lg"><i class="fas fa-book-blank text-6xl text-violet-300 mb-4"></i><h3 class="text-2xl font-bold">Galeri Masih Sepi</h3><p>Jadilah yang pertama mempublikasikan karya!</p></div>
+        </div>
+        <div id="loginPage" class="hidden fade-in max-w-md mx-auto"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8"><div class="text-center mb-8"><i class="fas fa-key text-4xl text-violet-500 mb-4"></i><h2 class="text-3xl font-bold dark:text-white">Masuk Ruang Penulis</h2><p class="dark:text-gray-300">Login untuk mengelola karyamu.</p></div><form id="loginForm" class="space-y-6"><div><label for="loginEmail" class="block text-sm font-medium dark:text-gray-300 mb-1">Email</label><input type="email" name="email" id="loginEmail" required class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><div><label for="loginPassword" class="block text-sm font-medium dark:text-gray-300 mb-1">Password</label><input type="password" name="password" id="loginPassword" required class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><button type="submit" id="loginSubmitBtn" class="w-full bg-violet-600 text-white py-3 rounded-lg hover:bg-violet-700 font-semibold flex items-center justify-center"><span id="loginBtnText">Masuk</span><div id="loginSpinner" class="hidden loading-spinner ml-3"></div></button></form><div class="mt-6 text-center"><button id="backToHomeBtn" class="text-violet-600 dark:text-violet-400 hover:underline">← Kembali</button></div></div></div>
+        <div id="adminPage" class="hidden fade-in"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8"><div class="flex justify-between items-start mb-8"><div><h2 class="text-4xl font-bold dark:text-white">Ruang Kreasi</h2><p class="dark:text-gray-300">Selamat datang, <span id="adminEmail" class="font-semibold text-violet-600 dark:text-violet-400"></span>.</p></div></div><div class="mb-10 p-6 bg-gradient-to-r from-violet-50 to-fuchsia-50 dark:from-violet-900/50 dark:to-fuchsia-900/50 rounded-lg border dark:border-violet-800"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-pen-to-square mr-3"></i>Publikasikan Karya Baru</h3><form id="uploadForm" class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label for="storyTitle" class="block text-sm font-medium">Judul</label><input type="text" name="storyTitle" id="storyTitle" required class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><div><label for="storyCategory" class="block text-sm font-medium">Kategori</label><select name="storyCategory" id="storyCategory" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"><option>Fiksi</option><option>Puisi</option><option>Cerpen</option><option>Non-Fiksi</option><option>Lainnya</option></select></div><div class="md:col-span-2"><label for="storyDescription" class="block text-sm font-medium">Sinopsis</label><textarea name="storyDescription" id="storyDescription" rows="3" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label for="coverFile" class="block text-sm font-medium">Cover</label><input type="file" name="coverFile" id="coverFile" accept="image/*" class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div><label for="storyFile" class="block text-sm font-medium">File (PDF)</label><input type="file" name="storyFile" id="storyFile" accept=".pdf" required class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div class="md:col-span-2"><button type="submit" id="uploadSubmitBtn" class="bg-violet-600 text-white px-6 py-3 rounded-lg hover:bg-violet-700 font-semibold flex items-center justify-center shadow-lg"><i class="fas fa-paper-plane mr-2"></i><span id="uploadBtnText">Publikasikan</span><div id="uploadSpinner" class="hidden loading-spinner ml-3"></div></button></div></form></div><div><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-layer-group mr-3"></i>Karya Terpublikasi</h3><div id="adminStoryList" class="space-y-4"></div></div><div class="mt-10"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-users-rays mr-3 text-cyan-400"></i>Pengunjung Aktif</h3><p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Daftar pengunjung yang aktif dalam 3 menit terakhir. Refresh halaman untuk data terbaru.</p><div id="activeVisitorsList" class="space-y-3"><div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div></div></div></div></div>
+        <div id="profilePage" class="hidden fade-in max-w-4xl mx-auto"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"><div class="h-48 bg-gradient-to-r from-violet-500 to-fuchsia-500"></div><div class="relative"><div class="absolute -top-16 left-8"><div class="w-32 h-32 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center shadow-lg border-4 dark:border-gray-800"><i class="fas fa-user-astronaut text-6xl text-violet-500"></i></div></div></div><div class="pt-20 px-8 pb-8"><h2 class="text-3xl font-bold" id="profileName"></h2><p class="dark:text-gray-400" id="profileEmail"></p><p class="mt-4" id="profileBio">Seorang penulis yang passionate dalam menciptakan cerita-cerita menarik dan menginspirasi. Bergabung dengan Galeri Karya Digital untuk berbagi imajinasi.</p><div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 text-center"><div class="bg-violet-50 dark:bg-violet-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-violet-600 dark:text-violet-400" id="statStories">0</p><p>Karya</p></div><div class="bg-blue-50 dark:bg-blue-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-blue-600 dark:text-blue-400" id="statViews">0</p><p>Total Dibaca</p></div><div class="bg-amber-50 dark:bg-amber-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-amber-600 dark:text-amber-400" id="statRating">N/A</p><p>Rating Rata2</p></div><div class="bg-pink-50 dark:bg-pink-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-pink-600 dark:text-pink-400" id="statHearts">0</p><p>Total Rating</p></div></div></div><div class="px-8 pb-8"><h3 class="text-xl font-bold mb-4">Karya Terbaru Penulis</h3><div id="recentStories" class="space-y-3"></div></div><div class="bg-gray-50 dark:bg-gray-900/50 px-8 py-4 text-center"><button id="backFromProfileBtn" class="text-violet-600 dark:text-violet-400 hover:underline">← Kembali</button></div></div></div>
+        
+        <div id="viewerPage" class="hidden fade-in">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8">
+                <div class="flex justify-between items-center mb-4">
+                    <div><h2 id="viewerTitle" class="text-2xl font-bold"></h2><p id="viewerDescription" class="clamp-1"></p></div>
+                    <button id="closeViewerBtn" class="text-gray-500 dark:text-gray-400 hover:text-red-500"><i class="fas fa-times text-2xl"></i></button>
+                </div>
+                
+                <div id="flipbookContainer" style="width: 100%; height: 75vh;"></div>
+
+                <div class="mt-8 pt-6 border-t dark:border-gray-700" id="interactionSection">
+                    <h3 class="text-2xl font-bold mb-4">Diskusi & Komentar</h3>
+                    <div id="commentFormContainer" class="mb-6">
+                        <form id="commentForm" class="space-y-3">
+                            <textarea id="commentContent" rows="3" required class="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></textarea>
+                            <div class="text-right"><button type="submit" class="bg-violet-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-violet-700">Kirim</button></div>
+                        </form>
+                    </div>
+                    <div id="visitorPrompt" class="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg"><p>Masukkan nama di halaman utama untuk ikut berdiskusi!</p></div>
+                    <div id="commentList" class="mt-6 space-y-4"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 max-w-2xl w-full"><h3 class="text-2xl font-bold mb-6">Edit Detail Karya</h3><form id="editStoryForm" class="space-y-4"><input type="hidden" id="editStoryId"><div><label for="editStoryTitle" class="block font-medium">Judul</label><input type="text" name="editStoryTitle" id="editStoryTitle" required class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><div><label for="editStoryCategory" class="block font-medium">Kategori</label><select name="editStoryCategory" id="editStoryCategory" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"><option>Fiksi</option><option>Puisi</option><option>Cerpen</option><option>Non-Fiksi</option><option>Lainnya</option></select></div><div><label for="editStoryDescription" class="block font-medium">Sinopsis</label><textarea name="editStoryDescription" id="editStoryDescription" rows="4" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></textarea></div><div class="flex justify-end space-x-4 pt-4"><button type="button" id="cancelEditBtn" class="bg-gray-200 dark:bg-gray-600 px-6 py-2 rounded-lg font-semibold">Batal</button><button type="submit" class="bg-violet-600 text-white px-6 py-2 rounded-lg font-semibold">Simpan</button></div></form></div></div>
+    
+    <div id="namePromptModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-sm transition-all duration-300">
+            <div id="nameInputSection">
+                <h2 class="text-2xl font-bold mb-4">Selamat Datang!</h2>
+                <p class="mb-6 text-gray-600 dark:text-gray-300">Boleh tahu nama panggilanmu?</p>
+                <form id="namePromptForm">
+                    <input type="text" id="visitorNameInput" class="w-full p-3 border rounded-lg text-center bg-white dark:bg-gray-700 dark:border-gray-600" required placeholder="Tulis namamu di sini...">
+                    <button type="submit" class="mt-4 w-full bg-violet-600 text-white py-3 rounded-lg font-semibold hover:bg-violet-700">Simpan & Masuk</button>
+                </form>
+                <button type="button" id="showSkipReasonBtn" class="text-sm text-gray-500 dark:text-gray-400 mt-4 hover:underline">Lewati untuk sekarang</button>
+            </div>
+            <div id="skipReasonSection" class="hidden">
+                <h2 class="text-2xl font-bold mb-4">Lewati Pengenalan</h2>
+                <p class="mb-6 text-gray-600 dark:text-gray-300">Boleh kami tahu alasanmu melewati langkah ini? (Opsional)</p>
+                <form id="skipReasonForm">
+                    <textarea id="skipReasonInput" class="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600" rows="3" placeholder="Contoh: Hanya ingin melihat-lihat saja"></textarea>
+                    <button type="submit" class="mt-4 w-full bg-amber-600 text-white py-3 rounded-lg font-semibold hover:bg-amber-700">Lanjutkan Tanpa Nama</button>
+                </form>
+                <button type="button" id="backToNameBtn" class="text-sm text-gray-500 dark:text-gray-400 mt-4 hover:underline">← Kembali</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="kickDurationModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[70] p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 max-w-sm w-full">
+            <h3 class="text-2xl font-bold mb-2">Atur Durasi Blokir</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Pilih berapa lama pengunjung ini tidak bisa mengakses galeri.</p>
+            <input type="hidden" id="kickVisitorUUID">
+            <div class="grid grid-cols-2 gap-4">
+                <button data-duration="60" class="kick-duration-btn w-full bg-gray-200 dark:bg-gray-700 p-3 rounded-lg hover:bg-violet-500 hover:text-white">1 Jam</button>
+                <button data-duration="360" class="kick-duration-btn w-full bg-gray-200 dark:bg-gray-700 p-3 rounded-lg hover:bg-violet-500 hover:text-white">6 Jam</button>
+                <button data-duration="1440" class="kick-duration-btn w-full bg-gray-200 dark:bg-gray-700 p-3 rounded-lg hover:bg-violet-500 hover:text-white">1 Hari</button>
+                <button data-duration="10512000" class="kick-duration-btn w-full bg-gray-200 dark:bg-gray-700 p-3 rounded-lg hover:bg-violet-500 hover:text-white">Permanen</button>
+            </div>
+            <div class="flex justify-end space-x-4 mt-8">
+                <button type="button" onclick="closeKickModal()" class="bg-gray-300 dark:bg-gray-600 px-6 py-2 rounded-lg font-semibold">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="kickMessageModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[70] p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 max-w-md w-full">
+            <h3 class="text-2xl font-bold mb-2">Kirim Pesan & Tendang</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Tulis pesan yang akan ditampilkan di layar pembaca saat ditendang.</p>
+            <input type="hidden" id="kickWithMessageVisitorUUID">
+            <textarea id="kickMessageContent" class="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600" rows="4" placeholder="Contoh: Komentar Anda tidak pantas."></textarea>
+            <div class="flex justify-end space-x-4 mt-6">
+                <button type="button" onclick="closeKickMessageModal()" class="bg-gray-300 dark:bg-gray-600 px-6 py-2 rounded-lg font-semibold">Batal</button>
+                <button type="button" onclick="sendKickMessage()" class="bg-amber-500 text-white px-6 py-2 rounded-lg font-semibold">Kirim & Tendang</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed top-5 right-0 mr-5 px-6 py-3 rounded-lg shadow-lg text-white font-semibold z-50 transition-opacity duration-300 ease-in-out opacity-0 invisible"><span id="toastMessage"></span></div>
+
+    <div id="kickScreen" class="hidden fixed inset-0 bg-gray-900/95 flex flex-col items-center justify-center z-[100] text-white text-center p-8">
+        <i class="fas fa-ban text-6xl text-red-500 mb-6"></i>
+        <h1 class="text-4xl font-bold mb-2">Akses Dibatasi</h1>
+        <p class="text-lg text-gray-300">Admin telah membatasi akses Anda ke galeri ini.</p>
+    </div>
+
+    <div id="glitchScreen" class="hidden fixed inset-0 bg-black z-[200] overflow-hidden text-red-500 font-mono flex items-center justify-center p-8">
+        <div class="glitch-text" data-text="SYSTEM FAILURE">SYSTEM FAILURE</div>
+        <div id="adminKickMessage" class="absolute bottom-1/4 left-0 right-0 text-center text-2xl text-white px-8"></div>
+        <div class="scan-line"></div>
+    </div>
+
+    <script>
+    const SUPABASE_URL = 'https://qayxdcdhsiovlsjmpieq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFheXhkY2Roc2lvdmxzam1waWVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3NTE5OTMsImV4cCI6MjA3MDMyNzk5M30.Ogtzg3cm393hirKp69X94b76Np1eC2eVBcbG0ywdFrk';
+    const AUTHOR_USER_ID = '331951e7-0a79-4c15-9755-41ea156ebda0';
+    
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let currentUser = null, allRatings = [], userRatings = new Map(), currentStoryId = null, visitorName = null, visitorUUID = null;
+    let currentPage = 1;
+    const storiesPerPage = 8;
+    let heartbeatInterval = null;
+
+    const pages = { home: document.getElementById('homePage'), login: document.getElementById('loginPage'), admin: document.getElementById('adminPage'), profile: document.getElementById('profilePage'), viewer: document.getElementById('viewerPage') };
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const moonIcon = document.getElementById('moonIcon');
+    const sunIcon = document.getElementById('sunIcon');
+    const namePromptModal = document.getElementById('namePromptModal');
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        setupEventListeners();
+        applyInitialTheme();
+        initializeVisitor();
+        const { data: { session } } = await supabase.auth.getSession();
+        currentUser = session?.user;
+        updateUI();
+        showPage('home');
+        await loadStoryCatalog();
+    });
+
+    function setupEventListeners() {
+        document.getElementById('homeBtn').addEventListener('click', (e) => { e.preventDefault(); currentPage = 1; loadStoryCatalog(); showPage('home'); });
+        darkModeToggle.addEventListener('click', toggleTheme);
+        document.getElementById('profileBtn').addEventListener('click', handleProfileClick);
+        document.getElementById('adminBtn').addEventListener('click', handleAdminClick);
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
+        document.getElementById('uploadForm').addEventListener('submit', handleUpload);
+        document.getElementById('backToHomeBtn').addEventListener('click', () => showPage('home'));
+        document.getElementById('backFromProfileBtn').addEventListener('click', () => showPage('home'));
+        document.getElementById('closeViewerBtn').addEventListener('click', () => showPage('home'));
+        document.getElementById('searchInput').addEventListener('input', () => { currentPage = 1; loadStoryCatalog(); });
+        document.getElementById('editStoryForm').addEventListener('submit', handleUpdateStory);
+        document.getElementById('cancelEditBtn').addEventListener('click', () => document.getElementById('editModal').classList.add('hidden'));
+        document.getElementById('commentForm').addEventListener('submit', handlePostComment);
+        
+        document.getElementById('namePromptForm').addEventListener('submit', handleNameSubmit);
+        document.getElementById('showSkipReasonBtn').addEventListener('click', () => {
+            document.getElementById('nameInputSection').classList.add('hidden');
+            document.getElementById('skipReasonSection').classList.remove('hidden');
+        });
+        document.getElementById('skipReasonForm').addEventListener('submit', handleFinalSkip);
+        document.getElementById('backToNameBtn').addEventListener('click', () => {
+            document.getElementById('skipReasonSection').classList.add('hidden');
+            document.getElementById('nameInputSection').classList.remove('hidden');
+        });
+        document.getElementById('promptNameAgainBtn').addEventListener('click', () => {
+            const lastChange = localStorage.getItem('nameChangeTimestamp');
+            const cooldown = 10 * 60 * 60 * 1000; // 10 jam dalam milidetik
+
+            if (lastChange && (new Date().getTime() - lastChange < cooldown)) {
+                const remainingTime = cooldown - (new Date().getTime() - lastChange);
+                const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+                const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                showToast(`Kamu baru bisa ganti nama lagi dalam ${hours} jam ${minutes} menit.`, 'warning');
+                return;
+            }
+            namePromptModal.classList.remove('hidden');
+        });
+
+        document.querySelectorAll('.kick-duration-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const duration = parseInt(btn.dataset.duration);
+                confirmKick(duration);
+            });
+        });
+
+        supabase.auth.onAuthStateChange((event, session) => {
+            currentUser = session?.user;
+            updateUI();
+        });
+        
+        document.querySelectorAll('.category-btn').forEach(btn => btn.addEventListener('click', () => {
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentPage = 1;
+            loadStoryCatalog();
+        }));
+    }
+
+    function listenForKickCommands() {
+        if (!visitorUUID) return;
+        const channel = supabase.channel('kick-' + visitorUUID);
+        channel.on('broadcast', { event: 'kick' }, ({ payload }) => {
+            console.log('Perintah tendang diterima!', payload);
+            if ('vibrate' in navigator) {
+                navigator.vibrate([200, 100, 200]);
+            }
+            setTimeout(() => {
+                showGlitchScreen(payload.message);
+            }, 500);
+            supabase.removeChannel(channel);
+        }).subscribe();
+    }
+
+    function showGlitchScreen(message) {
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        document.getElementById('adminKickMessage').textContent = message;
+        document.getElementById('glitchScreen').classList.remove('hidden');
+    }
+
+    function initializeVisitor() {
+        visitorName = localStorage.getItem('visitorName');
+        visitorUUID = localStorage.getItem('visitorUUID');
+        if (!visitorUUID) {
+            visitorUUID = crypto.randomUUID();
+            localStorage.setItem('visitorUUID', visitorUUID);
+        }
+        if (visitorName) {
+            updateWelcomeMessage(visitorName);
+            startHeartbeat();
+            listenForKickCommands();
+        } else {
+            namePromptModal.classList.remove('hidden');
+        }
+    }
+
+    async function handleNameSubmit(e) {
+        e.preventDefault();
+        const nameInput = document.getElementById('visitorNameInput').value.trim();
+        if (nameInput) {
+            visitorName = nameInput;
+            localStorage.setItem('visitorName', visitorName);
+            localStorage.setItem('nameChangeTimestamp', new Date().getTime());
+            await updateVisitorStatus({ visitor_name: visitorName, skip_reason: null });
+            updateWelcomeMessage(visitorName);
+            namePromptModal.classList.add('hidden');
+            loadStoryCatalog();
+            startHeartbeat();
+            listenForKickCommands();
+        }
+    }
+
+    async function handleFinalSkip(e) {
+        e.preventDefault();
+        const reason = document.getElementById('skipReasonInput').value.trim();
+        visitorName = 'Guest';
+        localStorage.setItem('visitorName', 'Guest');
+        await updateVisitorStatus({ visitor_name: 'Guest', skip_reason: reason || null });
+        updateWelcomeMessage('Kawan');
+        namePromptModal.classList.add('hidden');
+        loadStoryCatalog();
+        startHeartbeat();
+        listenForKickCommands();
+    }
+
+    function updateWelcomeMessage(name) {
+        const promptBtn = document.getElementById('promptNameAgainBtn');
+        document.getElementById('visitorName').textContent = name;
+        if (name === 'Guest' || name === 'Kawan') {
+            promptBtn.classList.remove('hidden');
+        } else {
+            promptBtn.classList.add('hidden');
+            document.getElementById('welcomeGreeting').textContent = "Selamat Datang Kembali";
+            document.getElementById('welcomeSubheading').textContent = "Senang melihatmu lagi di galeri ini!";
+        }
+    }
+    
+    function applyTheme(theme) { const isDark = theme === 'dark'; document.documentElement.classList.toggle('dark', isDark); moonIcon.classList.toggle('hidden', isDark); sunIcon.classList.toggle('hidden', !isDark); }
+    function toggleTheme() { const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark'; localStorage.setItem('theme', newTheme); applyTheme(newTheme); }
+    function applyInitialTheme() { const savedTheme = localStorage.getItem('theme'); const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; applyTheme(savedTheme || (systemPrefersDark ? 'dark' : 'light')); }
+
+    function showPage(pageName) { Object.values(pages).forEach(page => page && page.classList.add('hidden')); if (pages[pageName]) pages[pageName].classList.remove('hidden'); }
+    function updateUI() { const logoutBtn = document.getElementById('logoutBtn'); const adminEmail = document.getElementById('adminEmail'); if (currentUser) { logoutBtn.classList.remove('hidden'); if (adminEmail) adminEmail.textContent = currentUser.email; } else { logoutBtn.classList.add('hidden'); } }
+    
+    function handleAdminClick() {
+        if (currentUser) {
+            showPage('admin');
+            loadAdminStoryList();
+            loadActiveVisitors();
+        } else {
+            showPage('login');
+        }
+    }
+    function handleProfileClick() { if (!visitorName || visitorName === 'Guest') { return showToast('Masukkan nama dulu untuk melihat profil penulis.', 'warning'); } showPage('profile'); loadProfileData(); }
+
+    function escapeHtml(str) { if (typeof str !== 'string') return ''; return str.replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+    async function handleLogin(e) { e.preventDefault(); const form = e.target; const btn = form.querySelector('button[type="submit"]'); const { email, password } = Object.fromEntries(new FormData(form)); btn.disabled = true; try { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (error) throw error; showToast(`🎉 Selamat datang kembali!`, 'success'); showPage('admin'); loadAdminStoryList(); } catch (error) { showToast(`Login gagal: ${error.message}`, 'error'); } finally { btn.disabled = false; form.reset(); } }
+    async function logout() { const { error } = await supabase.auth.signOut(); if (error) { showToast(`Logout Gagal: ${error.message}`, 'error'); return; } currentUser = null; updateUI(); showPage('home'); loadStoryCatalog(); showToast('Kamu berhasil keluar.', 'info'); }
+
+    function startHeartbeat() {
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        updateVisitorStatus();
+        heartbeatInterval = setInterval(updateVisitorStatus, 30000);
+    }
+
+    async function updateVisitorStatus(extraData = {}) {
+        if (!visitorUUID) return;
+        try {
+            const { data, error } = await supabase
+                .from('visitors')
+                .upsert({
+                    visitor_uuid: visitorUUID,
+                    visitor_name: visitorName,
+                    last_seen: new Date().toISOString(),
+                    ...extraData
+                }, { onConflict: 'visitor_uuid' })
+                .select('blocked_until')
+                .single();
+            
+            if (error) throw error;
+
+            if (data && data.blocked_until && new Date(data.blocked_until) > new Date()) {
+                lockScreen(data.blocked_until);
+            }
+        } catch (error) {
+            console.error("Gagal update status visitor:", error.message);
+        }
+    }
+
+    function lockScreen(blockedUntilTimestamp) {
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        const kickScreen = document.getElementById('kickScreen');
+        const messageElement = kickScreen.querySelector('p');
+        
+        const formattedDate = new Date(blockedUntilTimestamp).toLocaleString('id-ID', {
+            dateStyle: 'full',
+            timeStyle: 'long'
+        });
+        
+        messageElement.innerHTML = `Admin telah membatasi akses Anda ke galeri ini.<br>Anda dapat mencoba kembali setelah: <strong class="text-yellow-400">${formattedDate}</strong>`;
+        
+        kickScreen.classList.remove('hidden');
+    }
+
+    async function handleUpload(e) { e.preventDefault(); if (!currentUser) return; const form = e.target; const btn = form.querySelector('button[type="submit"]'); const { storyTitle, storyDescription, storyCategory } = Object.fromEntries(new FormData(form)); const storyFile = document.getElementById('storyFile').files[0]; if (!storyFile || storyFile.size === 0) return showToast('File PDF jangan lupa dipilih!', 'error'); btn.disabled = true; try { let coverUrl = null; const coverFile = document.getElementById('coverFile').files[0]; if (coverFile && coverFile.size > 0) { const { data, error } = await supabase.storage.from('stories').upload(`covers/${currentUser.id}/${Date.now()}_${coverFile.name}`, coverFile); if (error) throw error; coverUrl = supabase.storage.from('stories').getPublicUrl(data.path).data.publicUrl; } const { data: fileData, error } = await supabase.storage.from('stories').upload(`files/${currentUser.id}/${Date.now()}_${storyFile.name}`, storyFile); if (error) throw error; const fileUrl = supabase.storage.from('stories').getPublicUrl(fileData.path).data.publicUrl; const { error: dbErr } = await supabase.from('stories').insert({ title: storyTitle, description: storyDescription, category: storyCategory, cover_url: coverUrl, file_path: fileData.path, file_url: fileUrl, user_id: currentUser.id }); if (dbErr) throw dbErr; showToast('Karya berhasil dipublikasikan! ✨', 'success'); form.reset(); await Promise.all([loadStoryCatalog(), loadAdminStoryList()]); } catch (error) { showToast(`Upload gagal: ${error.message}`, 'error'); } finally { btn.disabled = false; } }
+    
+    async function loadStoryCatalog() {
+        const catalog = document.getElementById('storyCatalog');
+        const loading = document.getElementById('loadingState');
+        const paginationControls = document.getElementById('paginationControls');
+        loading.classList.remove('hidden');
+        catalog.innerHTML = '';
+        document.getElementById('emptyState').classList.add('hidden');
+        paginationControls.innerHTML = '';
+
+        try {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const selectedCategory = document.querySelector('.category-btn.active').dataset.category;
+            let query = supabase.from('stories').select('*', { count: 'exact' });
+            if (selectedCategory !== 'Semua') query = query.eq('category', selectedCategory);
+            if (searchTerm) query = query.ilike('title', `%${searchTerm}%`);
+            const { count: totalStories, error: countError } = await query;
+            if (countError) throw countError;
+
+            const from = (currentPage - 1) * storiesPerPage;
+            const to = currentPage * storiesPerPage - 1;
+            
+            const { data: stories, error: storiesError } = await query.order('created_at', { ascending: false }).range(from, to);
+            if (storiesError) throw storiesError;
+
+            const { data: ratingsData } = await supabase.from('ratings').select('story_id, rating, visitor_uuid');
+            allRatings = ratingsData || [];
+            userRatings.clear();
+            if (visitorUUID) allRatings.filter(r => r.visitor_uuid === visitorUUID).forEach(r => userRatings.set(r.story_id, r.rating));
+            
+            if (!stories.length) {
+                document.getElementById('emptyState').classList.remove('hidden');
+            } else {
+                catalog.innerHTML = stories.map(createStoryCard).join('');
+                addCardEventListeners();
+                renderPaginationControls(totalStories);
+            }
+        } catch (error) {
+            showToast(`Gagal memuat galeri: ${error.message}`, 'error');
+        } finally {
+            loading.classList.add('hidden');
+        }
+    }
+
+    function renderPaginationControls(totalStories) {
+        const paginationControls = document.getElementById('paginationControls');
+        const totalPages = Math.ceil(totalStories / storiesPerPage);
+        if (totalPages <= 1) return;
+        let html = `<button id="prevPage" class="page-btn px-4 py-2 border rounded-lg dark:border-gray-600" ${currentPage === 1 ? 'disabled' : ''}>&laquo;</button>`;
+        html += `<span class="px-4 py-2 text-gray-700 dark:text-gray-300">Hal ${currentPage} / ${totalPages}</span>`;
+        html += `<button id="nextPage" class="page-btn px-4 py-2 border rounded-lg dark:border-gray-600" ${currentPage === totalPages ? 'disabled' : ''}>&raquo;</button>`;
+        paginationControls.innerHTML = html;
+        document.getElementById('prevPage')?.addEventListener('click', () => { if (currentPage > 1) { currentPage--; loadStoryCatalog(); window.scrollTo(0,0); } });
+        document.getElementById('nextPage')?.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; loadStoryCatalog(); window.scrollTo(0,0); } });
+    }
+
+    function addCardEventListeners() { document.querySelectorAll('.read-story-btn').forEach(btn => btn.addEventListener('click', (e) => openViewer(JSON.parse(e.currentTarget.dataset.story)))); document.querySelectorAll('.rating-star').forEach(star => star.addEventListener('click', (e) => { if (!visitorName || visitorName === 'Guest') return showToast('Masukkan nama di halaman utama untuk memberi rating!', 'warning'); const storyId = e.currentTarget.parentElement.dataset.storyId; handleSetRating(storyId, parseInt(e.currentTarget.dataset.value)); })); }
+    function createStoryCard(story) { const storyRatings = allRatings.filter(r => r.story_id === story.id); const avgRating = storyRatings.length ? storyRatings.reduce((sum, r) => sum + r.rating, 0) / storyRatings.length : 0; const userRating = userRatings.get(story.id) || 0; let starsHtml = Array.from({length: 5}, (_, i) => `<i class="rating-star fa-star text-2xl ${i < userRating ? 'fas filled' : 'far'}" data-value="${i + 1}"></i>`).join(''); const coverImg = story.cover_url ? `<img src="${story.cover_url}" class="w-full h-48 object-cover">` : `<div class="w-full h-48 bg-gradient-to-br from-violet-400 to-fuchsia-400 flex items-center justify-center"><i class="fas fa-book-open text-4xl text-white"></i></div>`; const ratingSection = (!visitorName || visitorName === 'Guest') ? `<div class="pt-3 border-t dark:border-gray-700 text-center text-xs text-gray-400 h-[76px] flex items-center justify-center">Masukkan nama untuk memberi rating.</div>` : `<div class="pt-3 border-t dark:border-gray-700"><div class="flex justify-between items-center"><div class="rating-stars space-x-1" data-story-id="${story.id}">${starsHtml}</div><span class="font-bold text-amber-500">${avgRating.toFixed(1)}</span></div><div class="text-xs text-gray-500 dark:text-gray-400 mt-1 rating-count">${storyRatings.length} rating</div></div>`; return `<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover-lift story-card" data-title="${escapeHtml(story.title)}" data-category="${story.category||'Lainnya'}"><div class="p-5 relative">${coverImg}<div class="absolute top-5 right-0 flex items-center space-x-2 bg-black/50 text-white text-xs font-bold px-2 py-1 rounded-l-full"><i class="fas fa-eye fa-fw mr-1"></i> ${story.view_count || 0}</div><span class="absolute top-12 right-0 bg-violet-500 text-white text-xs font-semibold px-3 py-1 rounded-l-full">${story.category||'Lainnya'}</span><h3 class="text-lg font-bold text-gray-900 dark:text-white clamp-2 mt-4">${story.title}</h3><p class="text-sm text-gray-600 dark:text-gray-300 clamp-3 h-16">${story.description||' '}</p>${ratingSection}<button class="read-story-btn mt-4 w-full bg-violet-600 text-white py-2 rounded-lg" data-story='${escapeHtml(JSON.stringify(story))}'>Baca</button></div></div>`; }
+    async function handleSetRating(storyId, ratingValue) { try { const { error } = await supabase.from('ratings').upsert({ story_id: storyId, visitor_uuid: visitorUUID, rating: ratingValue }); if (error) throw error; showToast(`Kamu memberi ${ratingValue} bintang!`, 'success'); userRatings.set(parseInt(storyId), ratingValue); const idx = allRatings.findIndex(r => r.story_id == storyId && r.visitor_uuid == visitorUUID); if (idx > -1) allRatings[idx].rating = ratingValue; else allRatings.push({ story_id: parseInt(storyId), visitor_uuid: visitorUUID, rating: ratingValue }); redrawStoryCard(storyId); } catch (error) { showToast(`Gagal menyimpan rating: ${error.message}`, 'error'); } }
+    function redrawStoryCard(storyId) { const card = document.querySelector(`.rating-stars[data-story-id='${storyId}']`).closest('.story-card'); if (!card) return; const storyRatings = allRatings.filter(r => r.story_id == storyId); const avgRating = storyRatings.length ? storyRatings.reduce((sum, r) => sum + r.rating, 0) / storyRatings.length : 0; const userRating = userRatings.get(parseInt(storyId)) || 0; let starsHtml = Array.from({length: 5}, (_, i) => `<i class="rating-star fa-star text-2xl ${i < userRating ? 'fas filled' : 'far'}" data-value="${i + 1}"></i>`).join(''); card.querySelector('.rating-stars').innerHTML = starsHtml; card.querySelector('.text-amber-500').textContent = avgRating.toFixed(1); card.querySelector('.rating-count').textContent = `${storyRatings.length} rating`; card.querySelectorAll('.rating-star').forEach(star => star.addEventListener('click', e => { if (!visitorName || visitorName === 'Guest') return showToast('Masukkan nama dulu!', 'warning'); handleSetRating(e.currentTarget.parentElement.dataset.storyId, parseInt(e.currentTarget.dataset.value))})); }
+    
+    async function openViewer(story) {
+        document.getElementById('viewerTitle').textContent = story.title;
+        document.getElementById('viewerDescription').textContent = story.description || '';
+        var container = document.getElementById('flipbookContainer');
+        container.innerHTML = ""; 
+        var options = {
+            webgl: true,
+            soundEnable: true,
+            height: '100%',
+            duration: 800,
+            backgroundColor: document.documentElement.classList.contains('dark') ? '#374151' : '#f8fafc',
+            enableDownload: false,
+            enableShare: false
+        };
+        var pdfUrl = story.file_url;
+        var $container = jQuery(container);
+        $container.flipBook(pdfUrl, options);
+        currentStoryId = story.id;
+        showPage('viewer');
+        await loadComments(story.id);
+        try { const { error } = await supabase.functions.invoke('increment-view-count', { body: { story_id: story.id } }); if (error) throw error; } catch (error) { console.error('Gagal menambah view count:', error.message); }
+    }
+
+    async function loadComments(storyId) { const list = document.getElementById('commentList'); const interactionSection = document.getElementById('interactionSection'); if (!visitorName || visitorName === 'Guest') { interactionSection.style.display = 'none'; return; } interactionSection.style.display = 'block'; document.getElementById('commentFormContainer').style.display = 'block'; document.getElementById('visitorPrompt').style.display = 'none'; list.innerHTML = '<div class="text-center text-gray-500 dark:text-gray-400">Memuat komentar...</div>'; try { const { data, error } = await supabase.from('comments').select('*').eq('story_id', storyId).order('created_at', { ascending: false }); if (error) throw error; if (data.length === 0) { list.innerHTML = '<div class="text-center text-gray-500 dark:text-gray-400">Jadilah yang pertama berkomentar!</div>'; } else { list.innerHTML = data.map(c => `<div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="flex justify-between items-center"><p class="font-semibold text-violet-800 dark:text-violet-400">${escapeHtml(c.visitor_name)}</p>${(visitorUUID === c.visitor_uuid || currentUser) ? `<button onclick="deleteComment(${c.id})" class="text-xs text-red-500 hover:underline">Hapus</button>` : ''}</div><p class="text-gray-700 dark:text-gray-300 mt-1 whitespace-pre-wrap">${escapeHtml(c.content)}</p><p class="text-xs text-gray-400 mt-2 text-right">${new Date(c.created_at).toLocaleString('id-ID')}</p></div>`).join(''); } } catch (error) { list.innerHTML = '<div class="text-center text-red-500">Gagal memuat komentar.</div>'; } }
+    async function handlePostComment(e) { e.preventDefault(); if (!visitorName || visitorName === 'Guest') return showToast('Masukkan nama dulu!', 'warning'); const content = document.getElementById('commentContent').value.trim(); if (!content) return; const btn = e.target.querySelector('button[type="submit"]'); btn.disabled = true; try { const { error } = await supabase.from('comments').insert({ story_id: currentStoryId, visitor_uuid: visitorUUID, visitor_name: visitorName, content: content }); if (error) throw error; document.getElementById('commentContent').value = ''; await loadComments(currentStoryId); } catch (error) { showToast(`Gagal: ${error.message}`, 'error'); } finally { btn.disabled = false; } }
+    async function deleteComment(commentId) { if (!confirm('Yakin?')) return; try { const { error } = await supabase.from('comments').delete().eq('id', commentId); if (error) throw error; showToast('Komentar dihapus.', 'success'); await loadComments(currentStoryId); } catch (error) { showToast(`Gagal: ${error.message}`, 'error'); } }
+    
+    async function loadAdminStoryList() { const list = document.getElementById('adminStoryList'); list.innerHTML = '<div class="loading-spinner mx-auto"></div>'; try { const { data, error } = await supabase.from('stories').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }); if (error) throw error; list.innerHTML = ''; if (!data.length) { list.innerHTML = `<p class="text-center text-gray-500 py-4 bg-gray-50 dark:bg-gray-700 rounded-lg">Belum ada karya.</p>`; return; } data.forEach(story => { const item = document.createElement('div'); item.className = 'flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg'; const coverPath = story.cover_url ? new URL(story.cover_url).pathname.split('/stories/')[1] : ''; item.innerHTML = `<div class="flex items-center space-x-4 flex-1 overflow-hidden"><img src="${story.cover_url || 'https://placehold.co/40x40/6d28d9/ffffff?text=K'}" class="w-10 h-10 rounded object-cover flex-shrink-0"><div class="flex-1 overflow-hidden"><p class="font-semibold clamp-1" title="${escapeHtml(story.title)}">${story.title}</p><p class="text-xs text-gray-500 dark:text-gray-400">${story.category||'N/A'} &middot; ${new Date(story.created_at).toLocaleDateString('id-ID')}</p></div></div><div class="flex space-x-3 ml-4"><button class="view-btn text-blue-500 h-full">Lihat</button><button class="edit-btn text-green-500 h-full">Edit</button><button class="delete-btn text-red-500 h-full">Hapus</button></div>`; item.querySelector('.view-btn').addEventListener('click', () => openViewer(story)); item.querySelector('.edit-btn').addEventListener('click', () => openEditModal(story)); item.querySelector('.delete-btn').addEventListener('click', () => deleteStory(story.id, story.file_path, coverPath)); list.appendChild(item); }); } catch (error) { list.innerHTML = `<p class="text-red-500">Gagal memuat daftar.</p>`; } }
+    
+    async function loadActiveVisitors() {
+        const listContainer = document.getElementById('activeVisitorsList');
+        listContainer.innerHTML = '<div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div>';
+        try {
+            const threeMinutesAgo = new Date(Date.now() - 3 * 60 * 1000).toISOString();
+            const { data: visitors, error } = await supabase
+                .from('visitors')
+                .select('*')
+                .filter('blocked_until', 'is', 'null')
+                .gt('last_seen', threeMinutesAgo)
+                .order('last_seen', { ascending: false });
+
+            if (error) throw error;
+
+            if (visitors.length === 0) {
+                listContainer.innerHTML = '<p class="text-center text-gray-500 py-4">Tidak ada pengunjung aktif saat ini.</p>';
+                return;
+            }
+
+            listContainer.innerHTML = visitors.map(visitor => {
+                const visitorIcon = visitor.visitor_name === 'Guest' ? 'fa-user-secret text-gray-400' : 'fa-user-check text-green-400';
+                const reasonHtml = visitor.skip_reason ? `<p class="text-xs text-amber-500 dark:text-amber-400 mt-1 pl-5" title="Alasan Skip"><i class="fas fa-comment-dots fa-fw mr-1"></i>${escapeHtml(visitor.skip_reason)}</p>` : '';
+
+                return `
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3 overflow-hidden">
+                                <i class="fas ${visitorIcon} fa-fw text-xl"></i>
+                                <div class="overflow-hidden">
+                                    <p class="font-semibold clamp-1">${escapeHtml(visitor.visitor_name)}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Aktif: ${new Date(visitor.last_seen).toLocaleTimeString('id-ID')}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="openKickMessageModal('${visitor.visitor_uuid}')" title="Tendang sekarang dengan pesan" class="bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-bold hover:bg-amber-600">
+                                    <i class="fas fa-bolt"></i> Tendang
+                                </button>
+                                <button onclick="openKickModal('${visitor.visitor_uuid}')" title="Blokir dengan durasi" class="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold hover:bg-red-600">
+                                    <i class="fas fa-user-clock"></i> Blokir
+                                </button>
+                            </div>
+                        </div>
+                        ${reasonHtml}
+                    </div>
+                `;
+            }).join('');
+
+        } catch (error) {
+            listContainer.innerHTML = `<p class="text-red-500">Gagal memuat daftar pengunjung: ${error.message}</p>`;
+        }
+    }
+
+    function openKickMessageModal(uuid) {
+        document.getElementById('kickWithMessageVisitorUUID').value = uuid;
+        document.getElementById('kickMessageModal').classList.remove('hidden');
+    }
+
+    function closeKickMessageModal() {
+        document.getElementById('kickMessageModal').classList.add('hidden');
+    }
+
+    async function sendKickMessage() {
+        const uuid = document.getElementById('kickWithMessageVisitorUUID').value;
+        const message = document.getElementById('kickMessageContent').value.trim();
+        if (!uuid) return;
+        try {
+            const channel = supabase.channel('kick-' + uuid);
+            await channel.send({
+                type: 'broadcast',
+                event: 'kick',
+                payload: { message: message || "Akses Anda telah diputus oleh admin." },
+            });
+            showToast('Perintah tendang terkirim!', 'success');
+            closeKickMessageModal();
+            const now = new Date();
+            const blockedUntil = new Date(now.getTime() + 5 * 60 * 1000);
+            await supabase.from('visitors').update({ blocked_until: blockedUntil.toISOString() }).eq('visitor_uuid', uuid);
+            loadActiveVisitors();
+        } catch (error) {
+            showToast(`Gagal mengirim perintah: ${error.message}`, 'error');
+        }
+    }
+
+    function openKickModal(uuid) {
+        document.getElementById('kickVisitorUUID').value = uuid;
+        document.getElementById('kickDurationModal').classList.remove('hidden');
+    }
+
+    function closeKickModal() {
+        document.getElementById('kickDurationModal').classList.add('hidden');
+    }
+
+    async function confirmKick(durationInMinutes) {
+        const uuid = document.getElementById('kickVisitorUUID').value;
+        if (!uuid) return;
+        const now = new Date();
+        const blockedUntil = new Date(now.getTime() + durationInMinutes * 60 * 1000);
+        try {
+            const { error } = await supabase
+                .from('visitors')
+                .update({ blocked_until: blockedUntil.toISOString() })
+                .eq('visitor_uuid', uuid);
+            if (error) throw error;
+            showToast('Pengunjung berhasil diblokir sementara.', 'success');
+            closeKickModal();
+            loadActiveVisitors();
+        } catch (error) {
+            showToast(`Gagal memblokir: ${error.message}`, 'error');
+        }
+    }
+
+    function openEditModal(story) { document.getElementById('editStoryId').value = story.id; document.getElementById('editStoryTitle').value = story.title; document.getElementById('editStoryDescription').value = story.description; document.getElementById('editStoryCategory').value = story.category || 'Lainnya'; document.getElementById('editModal').classList.remove('hidden'); }
+    async function handleUpdateStory(e) { e.preventDefault(); const storyId = document.getElementById('editStoryId').value; const form = e.target; const { editStoryTitle, editStoryDescription, editStoryCategory } = Object.fromEntries(new FormData(form)); try { const { error } = await supabase.from('stories').update({ title: editStoryTitle, description: editStoryDescription, category: editStoryCategory }).eq('id', storyId); if (error) throw error; showToast('Karya diperbarui!', 'success'); document.getElementById('editModal').classList.add('hidden'); await Promise.all([loadStoryCatalog(), loadAdminStoryList()]); } catch (error) { showToast(`Gagal: ${error.message}`, 'error'); } }
+    async function deleteStory(id, filePath, coverPath) { if (!confirm(`Yakin?`)) return; try { const filesToDelete = []; if(filePath) filesToDelete.push(filePath); if (coverPath) filesToDelete.push(coverPath); if(filesToDelete.length > 0) { await supabase.storage.from('stories').remove(filesToDelete); } await supabase.from('stories').delete().eq('id', id); showToast('Karya dihapus.', 'success'); await Promise.all([loadStoryCatalog(), loadAdminStoryList()]); } catch(error) { showToast(`Gagal: ${error.message}`, 'error'); } }
+    async function loadProfileData() { document.getElementById('profileName').textContent = "Profil Penulis"; document.getElementById('profileEmail').textContent = "karya@penulis.com"; let storyCount = 0, recentStories = [], avgRating = "N/A", totalRatings = 0, totalViews = 0; try { const { data: stories, error } = await supabase.from('stories').select('id, title, created_at, cover_url, file_url, description, category, view_count').eq('user_id', AUTHOR_USER_ID).order('created_at', { ascending: false }); if (error) throw error; storyCount = stories.length; recentStories = stories.slice(0, 3); totalViews = stories.reduce((sum, s) => sum + (s.view_count || 0), 0); if (storyCount > 0) { const storyIds = stories.map(s => s.id); const { data: ratings, error: rError } = await supabase.from('ratings').select('rating').in('story_id', storyIds); if (rError) throw rError; totalRatings = ratings.length; if (totalRatings > 0) { avgRating = (ratings.reduce((s, r) => s + r.rating, 0) / totalRatings).toFixed(1); } } } catch (error) { showToast('Gagal memuat data profil penulis.', 'error'); } document.getElementById('statStories').textContent = storyCount; document.getElementById('statRating').textContent = avgRating; document.getElementById('statViews').textContent = totalViews.toLocaleString('id-ID'); document.getElementById('statHearts').textContent = totalRatings.toLocaleString('id-ID'); const recentContainer = document.getElementById('recentStories'); recentContainer.innerHTML = ''; if (recentStories.length > 0) { recentStories.forEach(story => { const item = document.createElement('div'); item.className = 'flex items-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700'; item.onclick = () => openViewer(story); item.innerHTML = `<i class="fas fa-file-alt text-violet-500 text-xl mr-4"></i><div><p class="font-semibold">${story.title}</p><p class="text-sm text-gray-500 dark:text-gray-400">${new Date(story.created_at).toLocaleDateString('id-ID')}</p></div>`; recentContainer.appendChild(item); }); } else { recentContainer.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">Penulis belum memiliki karya.</p>'; } }
+    function showToast(message, type = 'info', duration = 3000) { const toast = document.getElementById('toast'); const toastMessage = document.getElementById('toastMessage'); toast.classList.remove('bg-green-500','bg-red-500','bg-blue-500'); if (type === 'success') toast.classList.add('bg-green-500'); else if (type === 'error') toast.classList.add('bg-red-500'); else toast.classList.add('bg-blue-500'); toastMessage.textContent = message; toast.classList.remove('invisible'); requestAnimationFrame(() => { toast.classList.remove('opacity-0'); }); setTimeout(() => { toast.classList.add('opacity-0'); setTimeout(() => { toast.classList.add('invisible'); }, 300); }, duration); }
+    
+    window.deleteComment = deleteComment;
+    window.openKickModal = openKickModal;
+    window.closeKickModal = closeKickModal;
+    window.openKickMessageModal = openKickMessageModal;
+    window.closeKickMessageModal = closeKickMessageModal;
+    window.sendKickMessage = sendKickMessage;
+    </script>
+</body>
+</html>
