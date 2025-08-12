@@ -89,6 +89,20 @@
             0% { top: 0%; }
             100% { top: 100%; }
         }
+
+        /* CSS untuk Latar Belakang Gradasi Bergerak */
+        .animated-gradient-bg {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient-animation 15s ease infinite;
+            border-radius: 1.5rem;
+            padding: 2rem 1rem;
+        }
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-200">
@@ -111,13 +125,23 @@
     <main class="container mx-auto px-6 py-10">
         <div id="homePage" class="fade-in">
             <div class="text-center mb-8">
-                <h2 class="text-5xl font-extrabold text-gray-900 dark:text-white mb-3">
-                    <span id="welcomeGreeting">Selamat Datang</span>, <span id="visitorName" class="text-violet-600 dark:text-violet-400">Kawan</span>!
-                </h2>
-                <p id="welcomeSubheading" class="text-lg text-gray-600 dark:text-gray-300">Temukan dunia baru dalam setiap halaman cerita.</p>
-                <div class="mt-6 relative w-full max-w-lg mx-auto">
-                    <input type="text" id="searchInput" placeholder="Cari judul..." class="w-full px-5 py-3 pl-12 border rounded-full focus:ring-2 focus:ring-violet-500 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600">
-                    <i class="fas fa-search absolute top-1/2 -translate-y-1/2 left-5 text-gray-400"></i>
+                <div class="animated-gradient-bg text-white mb-8 shadow-lg">
+                    <h2 class="text-5xl font-extrabold mb-3 min-h-[60px]">
+                        </h2>
+                    <p id="welcomeSubheading" class="text-lg opacity-90">Temukan dunia baru dalam setiap halaman cerita.</p>
+                </div>
+                <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-xl mx-auto">
+                    <div class="relative w-full sm:w-2/3">
+                        <input type="text" id="searchInput" placeholder="Cari judul..." class="w-full px-5 py-3 pl-12 border rounded-full focus:ring-2 focus:ring-violet-500 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600">
+                        <i class="fas fa-search absolute top-1/2 -translate-y-1/2 left-5 text-gray-400"></i>
+                    </div>
+                    <div class="w-full sm:w-1/3">
+                        <select id="sortOptions" class="w-full px-5 py-3 border rounded-full focus:ring-2 focus:ring-violet-500 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 appearance-none">
+                            <option value="newest">Urutkan: Terbaru</option>
+                            <option value="popular">Urutkan: Terpopuler</option>
+                            <option value="rating">Urutkan: Rating Tertinggi</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div id="categoryFilters" class="flex justify-center flex-wrap gap-2 mb-10">
@@ -270,6 +294,10 @@
         document.getElementById('backFromProfileBtn').addEventListener('click', () => showPage('home'));
         document.getElementById('closeViewerBtn').addEventListener('click', () => showPage('home'));
         document.getElementById('searchInput').addEventListener('input', () => { currentPage = 1; loadStoryCatalog(); });
+        document.getElementById('sortOptions').addEventListener('change', () => {
+            currentPage = 1;
+            loadStoryCatalog();
+        });
         document.getElementById('editStoryForm').addEventListener('submit', handleUpdateStory);
         document.getElementById('cancelEditBtn').addEventListener('click', () => document.getElementById('editModal').classList.add('hidden'));
         document.getElementById('commentForm').addEventListener('submit', handlePostComment);
@@ -339,6 +367,55 @@
         document.getElementById('glitchScreen').classList.remove('hidden');
     }
 
+    function typeWriter(element, text, speed = 75) {
+        let i = 0;
+        element.innerHTML = '';
+        function typing() {
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(typing, speed);
+            }
+        }
+        typing();
+    }
+
+    function displayCoolWelcome() {
+        const subheadingElement = document.getElementById('welcomeSubheading');
+        const welcomeH2 = document.querySelector('.animated-gradient-bg h2');
+        
+        const jam = new Date().getHours();
+        let ucapanWaktu;
+        if (jam >= 4 && jam < 11) {
+            ucapanWaktu = "Selamat Pagi";
+        } else if (jam >= 11 && jam < 15) {
+            ucapanWaktu = "Selamat Siang";
+        } else if (jam >= 15 && jam < 19) {
+            ucapanWaktu = "Selamat Sore";
+        } else {
+            ucapanWaktu = "Selamat Malam";
+        }
+
+        const nama = localStorage.getItem('visitorName');
+        let namaTampilan = (nama && nama !== 'Guest') ? nama : "Kawan";
+        const kalimatLengkap = `${ucapanWaktu}, ${namaTampilan}!`;
+        
+        typeWriter(welcomeH2, kalimatLengkap);
+
+        if (nama && nama !== 'Guest') {
+            subheadingElement.textContent = "Senang melihatmu lagi di galeri ini!";
+        } else {
+            subheadingElement.textContent = "Temukan dunia baru dalam setiap halaman cerita.";
+        }
+
+        const promptBtn = document.getElementById('promptNameAgainBtn');
+        if (nama === 'Guest' || !nama) {
+            promptBtn.classList.remove('hidden');
+        } else {
+            promptBtn.classList.add('hidden');
+        }
+    }
+
     function initializeVisitor() {
         visitorName = localStorage.getItem('visitorName');
         visitorUUID = localStorage.getItem('visitorUUID');
@@ -347,7 +424,7 @@
             localStorage.setItem('visitorUUID', visitorUUID);
         }
         if (visitorName) {
-            updateWelcomeMessage(visitorName);
+            displayCoolWelcome();
             startHeartbeat();
             listenForKickCommands();
         } else {
@@ -363,7 +440,7 @@
             localStorage.setItem('visitorName', visitorName);
             localStorage.setItem('nameChangeTimestamp', new Date().getTime());
             await updateVisitorStatus({ visitor_name: visitorName, skip_reason: null });
-            updateWelcomeMessage(visitorName);
+            displayCoolWelcome();
             namePromptModal.classList.add('hidden');
             loadStoryCatalog();
             startHeartbeat();
@@ -377,23 +454,11 @@
         visitorName = 'Guest';
         localStorage.setItem('visitorName', 'Guest');
         await updateVisitorStatus({ visitor_name: 'Guest', skip_reason: reason || null });
-        updateWelcomeMessage('Kawan');
+        displayCoolWelcome();
         namePromptModal.classList.add('hidden');
         loadStoryCatalog();
         startHeartbeat();
         listenForKickCommands();
-    }
-
-    function updateWelcomeMessage(name) {
-        const promptBtn = document.getElementById('promptNameAgainBtn');
-        document.getElementById('visitorName').textContent = name;
-        if (name === 'Guest' || name === 'Kawan') {
-            promptBtn.classList.remove('hidden');
-        } else {
-            promptBtn.classList.add('hidden');
-            document.getElementById('welcomeGreeting').textContent = "Selamat Datang Kembali";
-            document.getElementById('welcomeSubheading').textContent = "Senang melihatmu lagi di galeri ini!";
-        }
     }
     
     function applyTheme(theme) { const isDark = theme === 'dark'; document.documentElement.classList.toggle('dark', isDark); moonIcon.classList.toggle('hidden', isDark); sunIcon.classList.toggle('hidden', !isDark); }
@@ -477,22 +542,41 @@
         try {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const selectedCategory = document.querySelector('.category-btn.active').dataset.category;
-            let query = supabase.from('stories').select('*', { count: 'exact' });
-            if (selectedCategory !== 'Semua') query = query.eq('category', selectedCategory);
-            if (searchTerm) query = query.ilike('title', `%${searchTerm}%`);
+            const sortBy = document.getElementById('sortOptions').value;
+
+            const fromTable = sortBy === 'rating' ? 'stories_with_ratings' : 'stories';
+            let query = supabase.from(fromTable).select('*', { count: 'exact' });
+            
+            if (selectedCategory !== 'Semua') {
+                query = query.eq('category', selectedCategory);
+            }
+            if (searchTerm) {
+                query = query.ilike('title', `%${searchTerm}%`);
+            }
+
+            if (sortBy === 'newest') {
+                query = query.order('created_at', { ascending: false });
+            } else if (sortBy === 'popular') {
+                query = query.order('view_count', { ascending: false, nullsFirst: false });
+            } else if (sortBy === 'rating') {
+                query = query.order('avg_rating', { ascending: false, nullsFirst: false });
+            }
+            
             const { count: totalStories, error: countError } = await query;
             if (countError) throw countError;
 
             const from = (currentPage - 1) * storiesPerPage;
             const to = currentPage * storiesPerPage - 1;
             
-            const { data: stories, error: storiesError } = await query.order('created_at', { ascending: false }).range(from, to);
+            const { data: stories, error: storiesError } = await query.range(from, to);
             if (storiesError) throw storiesError;
 
             const { data: ratingsData } = await supabase.from('ratings').select('story_id, rating, visitor_uuid');
             allRatings = ratingsData || [];
             userRatings.clear();
-            if (visitorUUID) allRatings.filter(r => r.visitor_uuid === visitorUUID).forEach(r => userRatings.set(r.story_id, r.rating));
+            if (visitorUUID) {
+                allRatings.filter(r => r.visitor_uuid === visitorUUID).forEach(r => userRatings.set(r.story_id, r.rating));
+            }
             
             if (!stories.length) {
                 document.getElementById('emptyState').classList.remove('hidden');
@@ -521,7 +605,7 @@
     }
 
     function addCardEventListeners() { document.querySelectorAll('.read-story-btn').forEach(btn => btn.addEventListener('click', (e) => openViewer(JSON.parse(e.currentTarget.dataset.story)))); document.querySelectorAll('.rating-star').forEach(star => star.addEventListener('click', (e) => { if (!visitorName || visitorName === 'Guest') return showToast('Masukkan nama di halaman utama untuk memberi rating!', 'warning'); const storyId = e.currentTarget.parentElement.dataset.storyId; handleSetRating(storyId, parseInt(e.currentTarget.dataset.value)); })); }
-    function createStoryCard(story) { const storyRatings = allRatings.filter(r => r.story_id === story.id); const avgRating = storyRatings.length ? storyRatings.reduce((sum, r) => sum + r.rating, 0) / storyRatings.length : 0; const userRating = userRatings.get(story.id) || 0; let starsHtml = Array.from({length: 5}, (_, i) => `<i class="rating-star fa-star text-2xl ${i < userRating ? 'fas filled' : 'far'}" data-value="${i + 1}"></i>`).join(''); const coverImg = story.cover_url ? `<img src="${story.cover_url}" class="w-full h-48 object-cover">` : `<div class="w-full h-48 bg-gradient-to-br from-violet-400 to-fuchsia-400 flex items-center justify-center"><i class="fas fa-book-open text-4xl text-white"></i></div>`; const ratingSection = (!visitorName || visitorName === 'Guest') ? `<div class="pt-3 border-t dark:border-gray-700 text-center text-xs text-gray-400 h-[76px] flex items-center justify-center">Masukkan nama untuk memberi rating.</div>` : `<div class="pt-3 border-t dark:border-gray-700"><div class="flex justify-between items-center"><div class="rating-stars space-x-1" data-story-id="${story.id}">${starsHtml}</div><span class="font-bold text-amber-500">${avgRating.toFixed(1)}</span></div><div class="text-xs text-gray-500 dark:text-gray-400 mt-1 rating-count">${storyRatings.length} rating</div></div>`; return `<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover-lift story-card" data-title="${escapeHtml(story.title)}" data-category="${story.category||'Lainnya'}"><div class="p-5 relative">${coverImg}<div class="absolute top-5 right-0 flex items-center space-x-2 bg-black/50 text-white text-xs font-bold px-2 py-1 rounded-l-full"><i class="fas fa-eye fa-fw mr-1"></i> ${story.view_count || 0}</div><span class="absolute top-12 right-0 bg-violet-500 text-white text-xs font-semibold px-3 py-1 rounded-l-full">${story.category||'Lainnya'}</span><h3 class="text-lg font-bold text-gray-900 dark:text-white clamp-2 mt-4">${story.title}</h3><p class="text-sm text-gray-600 dark:text-gray-300 clamp-3 h-16">${story.description||' '}</p>${ratingSection}<button class="read-story-btn mt-4 w-full bg-violet-600 text-white py-2 rounded-lg" data-story='${escapeHtml(JSON.stringify(story))}'>Baca</button></div></div>`; }
+    function createStoryCard(story) { const storyRatings = allRatings.filter(r => r.story_id === story.id); const avgRating = story.avg_rating !== undefined ? story.avg_rating : (storyRatings.length ? storyRatings.reduce((sum, r) => sum + r.rating, 0) / storyRatings.length : 0); const userRating = userRatings.get(story.id) || 0; let starsHtml = Array.from({length: 5}, (_, i) => `<i class="rating-star fa-star text-2xl ${i < userRating ? 'fas filled' : 'far'}" data-value="${i + 1}"></i>`).join(''); const coverImg = story.cover_url ? `<img src="${story.cover_url}" class="w-full h-48 object-cover">` : `<div class="w-full h-48 bg-gradient-to-br from-violet-400 to-fuchsia-400 flex items-center justify-center"><i class="fas fa-book-open text-4xl text-white"></i></div>`; const ratingSection = (!visitorName || visitorName === 'Guest') ? `<div class="pt-3 border-t dark:border-gray-700 text-center text-xs text-gray-400 h-[76px] flex items-center justify-center">Masukkan nama untuk memberi rating.</div>` : `<div class="pt-3 border-t dark:border-gray-700"><div class="flex justify-between items-center"><div class="rating-stars space-x-1" data-story-id="${story.id}">${starsHtml}</div><span class="font-bold text-amber-500">${avgRating.toFixed(1)}</span></div><div class="text-xs text-gray-500 dark:text-gray-400 mt-1 rating-count">${story.total_ratings !== undefined ? story.total_ratings : storyRatings.length} rating</div></div>`; return `<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover-lift story-card" data-title="${escapeHtml(story.title)}" data-category="${story.category||'Lainnya'}"><div class="p-5 relative">${coverImg}<div class="absolute top-5 right-0 flex items-center space-x-2 bg-black/50 text-white text-xs font-bold px-2 py-1 rounded-l-full"><i class="fas fa-eye fa-fw mr-1"></i> ${story.view_count || 0}</div><span class="absolute top-12 right-0 bg-violet-500 text-white text-xs font-semibold px-3 py-1 rounded-l-full">${story.category||'Lainnya'}</span><h3 class="text-lg font-bold text-gray-900 dark:text-white clamp-2 mt-4">${story.title}</h3><p class="text-sm text-gray-600 dark:text-gray-300 clamp-3 h-16">${story.description||' '}</p>${ratingSection}<button class="read-story-btn mt-4 w-full bg-violet-600 text-white py-2 rounded-lg" data-story='${escapeHtml(JSON.stringify(story))}'>Baca</button></div></div>`; }
     async function handleSetRating(storyId, ratingValue) { try { const { error } = await supabase.from('ratings').upsert({ story_id: storyId, visitor_uuid: visitorUUID, rating: ratingValue }); if (error) throw error; showToast(`Kamu memberi ${ratingValue} bintang!`, 'success'); userRatings.set(parseInt(storyId), ratingValue); const idx = allRatings.findIndex(r => r.story_id == storyId && r.visitor_uuid == visitorUUID); if (idx > -1) allRatings[idx].rating = ratingValue; else allRatings.push({ story_id: parseInt(storyId), visitor_uuid: visitorUUID, rating: ratingValue }); redrawStoryCard(storyId); } catch (error) { showToast(`Gagal menyimpan rating: ${error.message}`, 'error'); } }
     function redrawStoryCard(storyId) { const card = document.querySelector(`.rating-stars[data-story-id='${storyId}']`).closest('.story-card'); if (!card) return; const storyRatings = allRatings.filter(r => r.story_id == storyId); const avgRating = storyRatings.length ? storyRatings.reduce((sum, r) => sum + r.rating, 0) / storyRatings.length : 0; const userRating = userRatings.get(parseInt(storyId)) || 0; let starsHtml = Array.from({length: 5}, (_, i) => `<i class="rating-star fa-star text-2xl ${i < userRating ? 'fas filled' : 'far'}" data-value="${i + 1}"></i>`).join(''); card.querySelector('.rating-stars').innerHTML = starsHtml; card.querySelector('.text-amber-500').textContent = avgRating.toFixed(1); card.querySelector('.rating-count').textContent = `${storyRatings.length} rating`; card.querySelectorAll('.rating-star').forEach(star => star.addEventListener('click', e => { if (!visitorName || visitorName === 'Guest') return showToast('Masukkan nama dulu!', 'warning'); handleSetRating(e.currentTarget.parentElement.dataset.storyId, parseInt(e.currentTarget.dataset.value))})); }
     
