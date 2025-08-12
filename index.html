@@ -104,6 +104,27 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+        
+        /* CSS BARU UNTUK KARTU CERITA */
+        .btn-gradient {
+            background-image: linear-gradient(to right, #8b5cf6, #a855f7);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+        }
+        .card-image-container {
+            overflow: hidden;
+            border-radius: 0.375rem;
+        }
+        .card-image-container img {
+            transition: transform 0.4s ease;
+        }
+        .story-card:hover .card-image-container img {
+            transform: scale(1.05);
+        }
 
         /* CSS untuk Canvas Partikel */
         #particles-js {
@@ -128,7 +149,7 @@
                     <i class="fas fa-pencil mr-2"></i>Tulis Namamu
                 </button>
                 <button id="darkModeToggle" title="Ubah Tema" class="text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400"><i id="moonIcon" class="fas fa-moon text-xl"></i><i id="sunIcon" class="fas fa-sun text-xl hidden"></i></button>
-                <button id="profileBtn" title="Tentang Penulis" class="text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400"><i class="fas fa-user-pen text-xl"></i></button>
+                <a href="profil.html" title="Tentang Penulis" class="text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400"><i class="fas fa-user-pen text-xl"></i></a>
                 <button id="adminBtn" title="Ruang Kreasi" class="text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400"><i class="fas fa-feather-pointed text-xl"></i></button>
                 <button id="logoutBtn" class="hidden bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 text-sm font-medium"><i class="fas fa-right-from-bracket mr-2"></i>Keluar</button>
             </div>
@@ -171,7 +192,7 @@
             <div id="emptyState" class="hidden text-center py-20 bg-gray-100 dark:bg-gray-800 rounded-lg"><i class="fas fa-book-blank text-6xl text-violet-300 mb-4"></i><h3 class="text-2xl font-bold">Galeri Masih Sepi</h3><p>Jadilah yang pertama mempublikasikan karya!</p></div>
         </div>
         <div id="loginPage" class="hidden fade-in max-w-md mx-auto"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8"><div class="text-center mb-8"><i class="fas fa-key text-4xl text-violet-500 mb-4"></i><h2 class="text-3xl font-bold dark:text-white">Masuk Ruang Penulis</h2><p class="dark:text-gray-300">Login untuk mengelola karyamu.</p></div><form id="loginForm" class="space-y-6"><div><label for="loginEmail" class="block text-sm font-medium dark:text-gray-300 mb-1">Email</label><input type="email" name="email" id="loginEmail" required class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><div><label for="loginPassword" class="block text-sm font-medium dark:text-gray-300 mb-1">Password</label><input type="password" name="password" id="loginPassword" required class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><button type="submit" id="loginSubmitBtn" class="w-full bg-violet-600 text-white py-3 rounded-lg hover:bg-violet-700 font-semibold flex items-center justify-center"><span id="loginBtnText">Masuk</span><div id="loginSpinner" class="hidden loading-spinner ml-3"></div></button></form><div class="mt-6 text-center"><button id="backToHomeBtn" class="text-violet-600 dark:text-violet-400 hover:underline">← Kembali</button></div></div></div>
-        <div id="adminPage" class="hidden fade-in"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8"><div class="flex justify-between items-start mb-8"><div><h2 class="text-4xl font-bold dark:text-white">Ruang Kreasi</h2><p class="dark:text-gray-300">Selamat datang, <span id="adminEmail" class="font-semibold text-violet-600 dark:text-violet-400"></span>.</p></div></div><div class="mb-10 p-6 bg-gradient-to-r from-violet-50 to-fuchsia-50 dark:from-violet-900/50 dark:to-fuchsia-900/50 rounded-lg border dark:border-violet-800"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-pen-to-square mr-3"></i>Publikasikan Karya Baru</h3><form id="uploadForm" class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label for="storyTitle" class="block text-sm font-medium">Judul</label><input type="text" name="storyTitle" id="storyTitle" required class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><div><label for="storyCategory" class="block text-sm font-medium">Kategori</label><select name="storyCategory" id="storyCategory" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"><option>Fiksi</option><option>Puisi</option><option>Cerpen</option><option>Non-Fiksi</option><option>Lainnya</option></select></div><div class="md:col-span-2"><label for="storyDescription" class="block text-sm font-medium">Sinopsis</label><textarea name="storyDescription" id="storyDescription" rows="3" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label for="coverFile" class="block text-sm font-medium">Cover</label><input type="file" name="coverFile" id="coverFile" accept="image/*" class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div><label for="storyFile" class="block text-sm font-medium">File (PDF)</label><input type="file" name="storyFile" id="storyFile" accept=".pdf" required class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div class="md:col-span-2"><button type="submit" id="uploadSubmitBtn" class="bg-violet-600 text-white px-6 py-3 rounded-lg hover:bg-violet-700 font-semibold flex items-center justify-center shadow-lg"><i class="fas fa-paper-plane mr-2"></i><span id="uploadBtnText">Publikasikan</span><div id="uploadSpinner" class="hidden loading-spinner ml-3"></div></button></div></form></div><div><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-layer-group mr-3"></i>Karya Terpublikasi</h3><div id="adminStoryList" class="space-y-4"></div></div><div class="mt-10"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-users-rays mr-3 text-cyan-400"></i>Pengunjung Aktif</h3><p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Daftar pengunjung yang aktif dalam 3 menit terakhir. Refresh halaman untuk data terbaru.</p><div id="activeVisitorsList" class="space-y-3"><div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div></div></div></div></div>
+        <div id="adminPage" class="hidden fade-in"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8"><div class="flex justify-between items-start mb-8"><div><h2 class="text-4xl font-bold dark:text-white">Ruang Kreasi</h2><p class="dark:text-gray-300">Selamat datang, <span id="adminEmail" class="font-semibold text-violet-600 dark:text-violet-400"></span>.</p></div></div><div class="mb-10 p-6 bg-gradient-to-r from-violet-50 to-fuchsia-50 dark:from-violet-900/50 dark:to-fuchsia-900/50 rounded-lg border dark:border-violet-800"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-pen-to-square mr-3"></i>Publikasikan Karya Baru</h3><form id="uploadForm" class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label for="storyTitle" class="block text-sm font-medium">Judul</label><input type="text" name="storyTitle" id="storyTitle" required class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><div><label for="storyCategory" class="block text-sm font-medium">Kategori</label><select name="storyCategory" id="storyCategory" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"><option>Fiksi</option><option>Puisi</option><option>Cerpen</option><option>Non-Fiksi</option><option>Lainnya</option></select></div><div class="md:col-span-2"><label for="storyDescription" class="block text-sm font-medium">Sinopsis</label><textarea name="storyDescription" id="storyDescription" rows="3" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label for="coverFile" class="block text-sm font-medium">Cover</label><input type="file" name="coverFile" id="coverFile" accept="image/*" class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div><label for="storyFile" class="block text-sm font-medium">File (PDF)</label><input type="file" name="storyFile" id="storyFile" accept=".pdf" required class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div class="md:col-span-2"><button type="submit" id="uploadSubmitBtn" class="bg-violet-600 text-white px-6 py-3 rounded-lg hover:bg-violet-700 font-semibold flex items-center justify-center shadow-lg"><i class="fas fa-paper-plane mr-2"></i><span id="uploadBtnText">Publikasikan</span><div id="uploadSpinner" class="hidden loading-spinner ml-3"></div></button></div></form></div><div><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-layer-group mr-3"></i>Karya Terpublikasi</h3><div id="adminStoryList" class="space-y-4"></div></div><div class="mt-10"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-users-rays mr-3 text-cyan-400"></i>Pengunjung Aktif</h3><p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Daftar pengunjung yang aktif dalam 3 menit terakhir. Refresh halaman untuk data terbaru.</p><div id="activeVisitorsList" class="space-y-3"><div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div></div></div><div class="mt-10"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-user-lock mr-3 text-red-400"></i>Manajemen Blokir</h3><p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Daftar pengunjung yang aksesnya sedang diblokir atau ditendang sementara.</p><div id="blockedVisitorsList" class="space-y-3"><div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div></div></div></div></div>
         <div id="profilePage" class="hidden fade-in max-w-4xl mx-auto"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"><div class="h-48 bg-gradient-to-r from-violet-500 to-fuchsia-500"></div><div class="relative"><div class="absolute -top-16 left-8"><div class="w-32 h-32 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center shadow-lg border-4 dark:border-gray-800"><i class="fas fa-user-astronaut text-6xl text-violet-500"></i></div></div></div><div class="pt-20 px-8 pb-8"><h2 class="text-3xl font-bold" id="profileName"></h2><p class="dark:text-gray-400" id="profileEmail"></p><p class="mt-4" id="profileBio">Seorang penulis yang passionate dalam menciptakan cerita-cerita menarik dan menginspirasi. Bergabung dengan Galeri Karya Digital untuk berbagi imajinasi.</p><div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 text-center"><div class="bg-violet-50 dark:bg-violet-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-violet-600 dark:text-violet-400" id="statStories">0</p><p>Karya</p></div><div class="bg-blue-50 dark:bg-blue-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-blue-600 dark:text-blue-400" id="statViews">0</p><p>Total Dibaca</p></div><div class="bg-amber-50 dark:bg-amber-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-amber-600 dark:text-amber-400" id="statRating">N/A</p><p>Rating Rata2</p></div><div class="bg-pink-50 dark:bg-pink-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-pink-600 dark:text-pink-400" id="statHearts">0</p><p>Total Rating</p></div></div></div><div class="px-8 pb-8"><h3 class="text-xl font-bold mb-4">Karya Terbaru Penulis</h3><div id="recentStories" class="space-y-3"></div></div><div class="bg-gray-50 dark:bg-gray-900/50 px-8 py-4 text-center"><button id="backFromProfileBtn" class="text-violet-600 dark:text-violet-400 hover:underline">← Kembali</button></div></div></div>
         
         <div id="viewerPage" class="hidden fade-in">
@@ -219,6 +240,36 @@
                     <button type="submit" class="mt-4 w-full bg-amber-600 text-white py-3 rounded-lg font-semibold hover:bg-amber-700">Lanjutkan Tanpa Nama</button>
                 </form>
                 <button type="button" id="backToNameBtn" class="text-sm text-gray-500 dark:text-gray-400 mt-4 hover:underline">← Kembali</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="quickViewModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[60] p-4 fade-in">
+        <button id="closeQuickViewBtn" class="absolute top-6 right-6 text-white text-opacity-70 hover:text-opacity-100 text-4xl z-[65] transition-transform duration-300 hover:rotate-90">
+            &times;
+        </button>
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-4xl h-[90vh] flex flex-col relative z-10">
+            <div class="p-4 border-b dark:border-gray-700 flex justify-between items-center">
+                <h3 class="font-bold text-lg">Detail Karya</h3>
+            </div>
+            <div class="flex-grow overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="md:col-span-1">
+                    <img id="quickViewCover" src="" alt="Cover Cerita" class="w-full h-auto object-cover rounded-lg shadow-lg">
+                </div>
+                <div class="md:col-span-2 flex flex-col">
+                    <div id="quickViewCategory" class="mb-2 text-sm font-bold text-violet-500 uppercase"></div>
+                    <h2 id="quickViewTitle" class="text-3xl font-extrabold text-gray-900 dark:text-white mb-3"></h2>
+                    <div class="flex items-center gap-4 text-gray-500 dark:text-gray-400 mb-4">
+                        <div id="quickViewRating" class="flex items-center gap-2"></div>
+                        <div id="quickViewViews" class="flex items-center gap-2"><i class="fas fa-eye"></i> <span></span></div>
+                    </div>
+                    <p id="quickViewDescription" class="text-base text-gray-600 dark:text-gray-300 mb-6"></p>
+                    <button id="quickViewReadBtn" class="w-full md:w-auto bg-violet-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-violet-700 mb-8 btn-gradient">
+                        <i class="fas fa-book-open mr-2"></i> Baca Sekarang
+                    </button>
+                    <h4 class="text-xl font-bold border-t dark:border-gray-700 pt-4 mb-4">Komentar</h4>
+                    <div id="quickViewCommentList" class="space-y-4"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -354,7 +405,6 @@
     function setupEventListeners() {
         document.getElementById('homeBtn').addEventListener('click', (e) => { e.preventDefault(); currentPage = 1; loadStoryCatalog(); showPage('home'); });
         darkModeToggle.addEventListener('click', toggleTheme);
-        document.getElementById('profileBtn').addEventListener('click', handleProfileClick);
         document.getElementById('adminBtn').addEventListener('click', handleAdminClick);
         document.getElementById('logoutBtn').addEventListener('click', logout);
         document.getElementById('loginForm').addEventListener('submit', handleLogin);
@@ -413,6 +463,38 @@
             currentPage = 1;
             loadStoryCatalog();
         }));
+    }
+    
+    async function openQuickView(story) {
+        const modal = document.getElementById('quickViewModal');
+        
+        document.getElementById('quickViewCover').src = story.cover_url || 'https://placehold.co/300x450/6d28d9/ffffff?text=Cover';
+        document.getElementById('quickViewCategory').textContent = story.category || 'Lainnya';
+        document.getElementById('quickViewTitle').textContent = story.title;
+        document.getElementById('quickViewDescription').textContent = story.description || 'Tidak ada sinopsis.';
+        document.getElementById('quickViewViews').querySelector('span').textContent = story.view_count || 0;
+
+        const ratingContainer = document.getElementById('quickViewRating');
+        const storyRatings = allRatings.filter(r => r.story_id === story.id);
+        const avgRating = story.avg_rating !== undefined ? story.avg_rating : (storyRatings.length ? storyRatings.reduce((sum, r) => sum + r.rating, 0) / storyRatings.length : 0);
+        const totalRatings = story.total_ratings !== undefined ? story.total_ratings : storyRatings.length;
+        ratingContainer.innerHTML = `<i class="fas fa-star text-yellow-400"></i> <strong>${avgRating.toFixed(1)}</strong> <span class="text-gray-500">(${totalRatings} ulasan)</span>`;
+
+        await loadComments(story.id, 'quickViewCommentList');
+
+        const readBtn = document.getElementById('quickViewReadBtn');
+        const newReadBtn = readBtn.cloneNode(true);
+        readBtn.parentNode.replaceChild(newReadBtn, readBtn);
+        newReadBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+            openViewer(story);
+        });
+        
+        document.getElementById('closeQuickViewBtn').onclick = () => {
+            modal.classList.add('hidden');
+        };
+
+        modal.classList.remove('hidden');
     }
 
     function listenForKickCommands() {
@@ -542,10 +624,96 @@
             showPage('admin');
             loadAdminStoryList();
             loadActiveVisitors();
+            loadBlockedVisitors();
         } else {
             showPage('login');
         }
     }
+    
+    async function loadBlockedVisitors() {
+        const listContainer = document.getElementById('blockedVisitorsList');
+        listContainer.innerHTML = '<div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div>';
+
+        try {
+            const { data: visitors, error } = await supabase
+                .from('visitors')
+                .select('*')
+                .not('blocked_until', 'is', null)
+                .gt('blocked_until', new Date().toISOString())
+                .order('blocked_until', { ascending: true });
+
+            if (error) throw error;
+
+            if (visitors.length === 0) {
+                listContainer.innerHTML = '<p class="text-center text-gray-500 py-4">Tidak ada pengunjung yang sedang diblokir.</p>';
+                return;
+            }
+
+            listContainer.innerHTML = visitors.map(visitor => {
+                const blockedUntil = new Date(visitor.blocked_until);
+                const now = new Date();
+                const isPermanent = (blockedUntil.getFullYear() > new Date().getFullYear() + 10);
+                let timeRemaining;
+
+                if (isPermanent) {
+                    timeRemaining = 'Permanen';
+                } else if (blockedUntil > now) {
+                    const diffMs = blockedUntil - now;
+                    const diffHrs = Math.floor(diffMs / 3600000);
+                    const diffMins = Math.round((diffMs % 3600000) / 60000);
+                    timeRemaining = `Sisa ${diffHrs} jam ${diffMins} mnt`;
+                } else {
+                    timeRemaining = 'Kadaluarsa';
+                }
+
+                return `
+                <div class="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800/50">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3 overflow-hidden">
+                            <i class="fas fa-user-slash fa-fw text-xl text-red-500"></i>
+                            <div class="overflow-hidden">
+                                <p class="font-semibold clamp-1">${escapeHtml(visitor.visitor_name)}</p>
+                                <p class="text-xs text-red-600 dark:text-red-400">
+                                    Diblokir hingga: ${isPermanent ? 'Permanen' : blockedUntil.toLocaleString('id-ID')}
+                                    <span class="font-bold">(${timeRemaining})</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="openKickModal('${visitor.visitor_uuid}')" title="Ubah Durasi Blokir" class="bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold hover:bg-yellow-600">
+                                Edit
+                            </button>
+                            <button onclick="unblockVisitor('${visitor.visitor_uuid}')" title="Buka Blokir Sekarang" class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold hover:bg-green-600">
+                                Buka
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+        } catch (error) {
+            listContainer.innerHTML = `<p class="text-red-500">Gagal memuat daftar blokir: ${error.message}</p>`;
+        }
+    }
+
+    async function unblockVisitor(uuid) {
+        if (!confirm('Yakin ingin membuka blokir pengunjung ini? Mereka akan bisa langsung mengakses galeri lagi.')) return;
+        try {
+            const { error } = await supabase
+                .from('visitors')
+                .update({ blocked_until: null })
+                .eq('visitor_uuid', uuid);
+
+            if (error) throw error;
+            showToast('Blokir berhasil dibuka.', 'success');
+            loadBlockedVisitors();
+            loadActiveVisitors();
+        } catch (error) {
+            showToast(`Gagal membuka blokir: ${error.message}`, 'error');
+        }
+    }
+    
     function handleProfileClick() { if (!visitorName || visitorName === 'Guest') { return showToast('Masukkan nama dulu untuk melihat profil penulis.', 'warning'); } showPage('profile'); loadProfileData(); }
 
     function escapeHtml(str) { if (typeof str !== 'string') return ''; return str.replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
@@ -673,10 +841,94 @@
         document.getElementById('nextPage')?.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; loadStoryCatalog(); window.scrollTo(0,0); } });
     }
 
-    function addCardEventListeners() { document.querySelectorAll('.read-story-btn').forEach(btn => btn.addEventListener('click', (e) => openViewer(JSON.parse(e.currentTarget.dataset.story)))); document.querySelectorAll('.rating-star').forEach(star => star.addEventListener('click', (e) => { if (!visitorName || visitorName === 'Guest') return showToast('Masukkan nama di halaman utama untuk memberi rating!', 'warning'); const storyId = e.currentTarget.parentElement.dataset.storyId; handleSetRating(storyId, parseInt(e.currentTarget.dataset.value)); })); }
-    function createStoryCard(story) { const storyRatings = allRatings.filter(r => r.story_id === story.id); const avgRating = story.avg_rating !== undefined ? story.avg_rating : (storyRatings.length ? storyRatings.reduce((sum, r) => sum + r.rating, 0) / storyRatings.length : 0); const userRating = userRatings.get(story.id) || 0; let starsHtml = Array.from({length: 5}, (_, i) => `<i class="rating-star fa-star text-2xl ${i < userRating ? 'fas filled' : 'far'}" data-value="${i + 1}"></i>`).join(''); const coverImg = story.cover_url ? `<img src="${story.cover_url}" class="w-full h-48 object-cover">` : `<div class="w-full h-48 bg-gradient-to-br from-violet-400 to-fuchsia-400 flex items-center justify-center"><i class="fas fa-book-open text-4xl text-white"></i></div>`; const ratingSection = (!visitorName || visitorName === 'Guest') ? `<div class="pt-3 border-t dark:border-gray-700 text-center text-xs text-gray-400 h-[76px] flex items-center justify-center">Masukkan nama untuk memberi rating.</div>` : `<div class="pt-3 border-t dark:border-gray-700"><div class="flex justify-between items-center"><div class="rating-stars space-x-1" data-story-id="${story.id}">${starsHtml}</div><span class="font-bold text-amber-500">${avgRating.toFixed(1)}</span></div><div class="text-xs text-gray-500 dark:text-gray-400 mt-1 rating-count">${story.total_ratings !== undefined ? story.total_ratings : storyRatings.length} rating</div></div>`; return `<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover-lift story-card" data-title="${escapeHtml(story.title)}" data-category="${story.category||'Lainnya'}"><div class="p-5 relative">${coverImg}<div class="absolute top-5 right-0 flex items-center space-x-2 bg-black/50 text-white text-xs font-bold px-2 py-1 rounded-l-full"><i class="fas fa-eye fa-fw mr-1"></i> ${story.view_count || 0}</div><span class="absolute top-12 right-0 bg-violet-500 text-white text-xs font-semibold px-3 py-1 rounded-l-full">${story.category||'Lainnya'}</span><h3 class="text-lg font-bold text-gray-900 dark:text-white clamp-2 mt-4">${story.title}</h3><p class="text-sm text-gray-600 dark:text-gray-300 clamp-3 h-16">${story.description||' '}</p>${ratingSection}<button class="read-story-btn mt-4 w-full bg-violet-600 text-white py-2 rounded-lg" data-story='${escapeHtml(JSON.stringify(story))}'>Baca</button></div></div>`; }
+    function addCardEventListeners() {
+        document.querySelectorAll('.read-story-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openQuickView(JSON.parse(e.currentTarget.dataset.story));
+            });
+        });
+
+        document.querySelectorAll('.rating-star').forEach(star => {
+            star.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!visitorName || visitorName === 'Guest') return showToast('Masukkan nama di halaman utama untuk memberi rating!', 'warning');
+                const storyId = e.currentTarget.parentElement.dataset.storyId;
+                handleSetRating(storyId, parseInt(e.currentTarget.dataset.value));
+            });
+        });
+
+        document.querySelectorAll('.story-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.read-story-btn') || e.target.closest('.rating-star')) {
+                    return;
+                }
+                const storyData = card.querySelector('.read-story-btn').dataset.story;
+                openQuickView(JSON.parse(storyData));
+            });
+        });
+    }
+    
+    function createStoryCard(story) {
+        const storyRatings = allRatings.filter(r => r.story_id === story.id);
+        const avgRating = story.avg_rating !== undefined ? story.avg_rating : (storyRatings.length ? storyRatings.reduce((sum, r) => sum + r.rating, 0) / storyRatings.length : 0);
+        const totalRatings = story.total_ratings !== undefined ? story.total_ratings : storyRatings.length;
+        const userRating = userRatings.get(story.id) || 0;
+        
+        let starsHtml = Array.from({length: 5}, (_, i) => `<i class="rating-star fa-star text-xl ${i < userRating ? 'fas text-yellow-400' : 'far text-gray-400'}" data-value="${i + 1}"></i>`).join('');
+        
+        const coverImg = story.cover_url 
+            ? `<img src="${story.cover_url}" class="w-full h-48 object-cover" alt="Cover ${escapeHtml(story.title)}">` 
+            : `<div class="w-full h-48 bg-gradient-to-br from-violet-400 to-fuchsia-400 flex items-center justify-center"><i class="fas fa-book-open text-4xl text-white"></i></div>`;
+
+        return `
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover-lift story-card flex flex-col" data-title="${escapeHtml(story.title)}" data-category="${story.category||'Lainnya'}">
+            <div class="card-image-container relative">
+                ${coverImg}
+                <div class="absolute top-2 right-2 flex flex-col items-end gap-2">
+                    <div class="flex items-center space-x-2 bg-gray-900/60 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded-full">
+                        <i class="fas fa-eye fa-fw"></i> 
+                        <span>${story.view_count || 0}</span>
+                    </div>
+                    <span class="bg-violet-500 text-white text-xs font-semibold px-3 py-1 rounded-full">${story.category||'Lainnya'}</span>
+                </div>
+            </div>
+            <div class="p-4 flex flex-col flex-grow">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white clamp-2">${story.title}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 clamp-2 my-2 h-10 flex-grow">${story.description || ' '}</p>
+                <div class="rating-container flex items-center gap-2 mt-2 mb-4 text-sm">
+                    <div class="rating-stars flex items-center space-x-1" data-story-id="${story.id}">${starsHtml}</div>
+                    <span class="font-bold text-gray-800 dark:text-white">${avgRating.toFixed(1)}</span>
+                    <span class="text-gray-500 dark:text-gray-400 rating-count">(${totalRatings} ulasan)</span>
+                </div>
+                <button class="read-story-btn mt-auto w-full text-white py-2 rounded-lg font-semibold btn-gradient" data-story='${escapeHtml(JSON.stringify(story))}'>
+                    Baca
+                </button>
+            </div>
+        </div>`;
+    }
+
     async function handleSetRating(storyId, ratingValue) { try { const { error } = await supabase.from('ratings').upsert({ story_id: storyId, visitor_uuid: visitorUUID, rating: ratingValue }); if (error) throw error; showToast(`Kamu memberi ${ratingValue} bintang!`, 'success'); userRatings.set(parseInt(storyId), ratingValue); const idx = allRatings.findIndex(r => r.story_id == storyId && r.visitor_uuid == visitorUUID); if (idx > -1) allRatings[idx].rating = ratingValue; else allRatings.push({ story_id: parseInt(storyId), visitor_uuid: visitorUUID, rating: ratingValue }); redrawStoryCard(storyId); } catch (error) { showToast(`Gagal menyimpan rating: ${error.message}`, 'error'); } }
-    function redrawStoryCard(storyId) { const card = document.querySelector(`.rating-stars[data-story-id='${storyId}']`).closest('.story-card'); if (!card) return; const storyRatings = allRatings.filter(r => r.story_id == storyId); const avgRating = storyRatings.length ? storyRatings.reduce((sum, r) => sum + r.rating, 0) / storyRatings.length : 0; const userRating = userRatings.get(parseInt(storyId)) || 0; let starsHtml = Array.from({length: 5}, (_, i) => `<i class="rating-star fa-star text-2xl ${i < userRating ? 'fas filled' : 'far'}" data-value="${i + 1}"></i>`).join(''); card.querySelector('.rating-stars').innerHTML = starsHtml; card.querySelector('.text-amber-500').textContent = avgRating.toFixed(1); card.querySelector('.rating-count').textContent = `${storyRatings.length} rating`; card.querySelectorAll('.rating-star').forEach(star => star.addEventListener('click', e => { if (!visitorName || visitorName === 'Guest') return showToast('Masukkan nama dulu!', 'warning'); handleSetRating(e.currentTarget.parentElement.dataset.storyId, parseInt(e.currentTarget.dataset.value))})); }
+    
+    function redrawStoryCard(storyId) {
+        const card = document.querySelector(`.rating-stars[data-story-id='${storyId}']`).closest('.story-card');
+        if (!card) return;
+
+        const storyRatings = allRatings.filter(r => r.story_id == storyId);
+        const avgRating = storyRatings.length ? storyRatings.reduce((sum, r) => sum + r.rating, 0) / storyRatings.length : 0;
+        const userRating = userRatings.get(parseInt(storyId)) || 0;
+
+        let starsHtml = Array.from({length: 5}, (_, i) => `<i class="rating-star fa-star text-xl ${i < userRating ? 'fas text-yellow-400' : 'far text-gray-400'}" data-value="${i + 1}"></i>`).join('');
+        
+        card.querySelector('.rating-stars').innerHTML = starsHtml;
+        card.querySelector('.rating-container .font-bold').textContent = avgRating.toFixed(1);
+        card.querySelector('.rating-count').textContent = `(${storyRatings.length} ulasan)`;
+
+        card.querySelectorAll('.rating-star').forEach(star => star.addEventListener('click', e => {
+            if (!visitorName || visitorName === 'Guest') return showToast('Masukkan nama dulu!', 'warning');
+            handleSetRating(e.currentTarget.parentElement.dataset.storyId, parseInt(e.currentTarget.dataset.value))
+        }));
+    }
     
     async function openViewer(story) {
         document.getElementById('viewerTitle').textContent = story.title;
@@ -701,9 +953,33 @@
         try { const { error } = await supabase.functions.invoke('increment-view-count', { body: { story_id: story.id } }); if (error) throw error; } catch (error) { console.error('Gagal menambah view count:', error.message); }
     }
 
-    async function loadComments(storyId) { const list = document.getElementById('commentList'); const interactionSection = document.getElementById('interactionSection'); if (!visitorName || visitorName === 'Guest') { interactionSection.style.display = 'none'; return; } interactionSection.style.display = 'block'; document.getElementById('commentFormContainer').style.display = 'block'; document.getElementById('visitorPrompt').style.display = 'none'; list.innerHTML = '<div class="text-center text-gray-500 dark:text-gray-400">Memuat komentar...</div>'; try { const { data, error } = await supabase.from('comments').select('*').eq('story_id', storyId).order('created_at', { ascending: false }); if (error) throw error; if (data.length === 0) { list.innerHTML = '<div class="text-center text-gray-500 dark:text-gray-400">Jadilah yang pertama berkomentar!</div>'; } else { list.innerHTML = data.map(c => `<div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="flex justify-between items-center"><p class="font-semibold text-violet-800 dark:text-violet-400">${escapeHtml(c.visitor_name)}</p>${(visitorUUID === c.visitor_uuid || currentUser) ? `<button onclick="deleteComment(${c.id})" class="text-xs text-red-500 hover:underline">Hapus</button>` : ''}</div><p class="text-gray-700 dark:text-gray-300 mt-1 whitespace-pre-wrap">${escapeHtml(c.content)}</p><p class="text-xs text-gray-400 mt-2 text-right">${new Date(c.created_at).toLocaleString('id-ID')}</p></div>`).join(''); } } catch (error) { list.innerHTML = '<div class="text-center text-red-500">Gagal memuat komentar.</div>'; } }
+    async function loadComments(storyId, targetElementId = 'commentList') { 
+        const list = document.getElementById(targetElementId);
+        if (!list) return;
+        const interactionSection = document.getElementById('interactionSection'); 
+        if (!visitorName || visitorName === 'Guest') { 
+            if(interactionSection) interactionSection.style.display = 'none'; 
+            if(targetElementId === 'quickViewCommentList') list.innerHTML = '<p class="text-center text-sm text-gray-500">Masukkan nama di halaman utama untuk melihat & menambah komentar.</p>';
+            return; 
+        } 
+        if(interactionSection) interactionSection.style.display = 'block'; 
+        if(document.getElementById('commentFormContainer')) document.getElementById('commentFormContainer').style.display = 'block'; 
+        if(document.getElementById('visitorPrompt')) document.getElementById('visitorPrompt').style.display = 'none'; 
+        list.innerHTML = '<div class="text-center text-gray-500 dark:text-gray-400">Memuat komentar...</div>'; 
+        try { 
+            const { data, error } = await supabase.from('comments').select('*').eq('story_id', storyId).order('created_at', { ascending: false }); 
+            if (error) throw error; 
+            if (data.length === 0) { 
+                list.innerHTML = '<div class="text-center text-gray-500 dark:text-gray-400">Jadilah yang pertama berkomentar!</div>'; 
+            } else { 
+                list.innerHTML = data.map(c => `<div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="flex justify-between items-center"><p class="font-semibold text-violet-800 dark:text-violet-400">${escapeHtml(c.visitor_name)}</p>${(visitorUUID === c.visitor_uuid || currentUser) ? `<button onclick="deleteComment(${c.id})" class="text-xs text-red-500 hover:underline">Hapus</button>` : ''}</div><p class="text-gray-700 dark:text-gray-300 mt-1 whitespace-pre-wrap">${escapeHtml(c.content)}</p><p class="text-xs text-gray-400 mt-2 text-right">${new Date(c.created_at).toLocaleString('id-ID')}</p></div>`).join(''); 
+            } 
+        } catch (error) { 
+            list.innerHTML = '<div class="text-center text-red-500">Gagal memuat komentar.</div>'; 
+        } 
+    }
     async function handlePostComment(e) { e.preventDefault(); if (!visitorName || visitorName === 'Guest') return showToast('Masukkan nama dulu!', 'warning'); const content = document.getElementById('commentContent').value.trim(); if (!content) return; const btn = e.target.querySelector('button[type="submit"]'); btn.disabled = true; try { const { error } = await supabase.from('comments').insert({ story_id: currentStoryId, visitor_uuid: visitorUUID, visitor_name: visitorName, content: content }); if (error) throw error; document.getElementById('commentContent').value = ''; await loadComments(currentStoryId); } catch (error) { showToast(`Gagal: ${error.message}`, 'error'); } finally { btn.disabled = false; } }
-    async function deleteComment(commentId) { if (!confirm('Yakin?')) return; try { const { error } = await supabase.from('comments').delete().eq('id', commentId); if (error) throw error; showToast('Komentar dihapus.', 'success'); await loadComments(currentStoryId); } catch (error) { showToast(`Gagal: ${error.message}`, 'error'); } }
+    async function deleteComment(commentId) { if (!confirm('Yakin?')) return; try { const { error } = await supabase.from('comments').delete().eq('id', commentId); if (error) throw error; showToast('Komentar dihapus.', 'success'); if(document.getElementById('viewerPage').classList.contains('hidden')) { openQuickView({id: currentStoryId}) } else { loadComments(currentStoryId) } } catch (error) { showToast(`Gagal: ${error.message}`, 'error'); } }
     
     async function loadAdminStoryList() { const list = document.getElementById('adminStoryList'); list.innerHTML = '<div class="loading-spinner mx-auto"></div>'; try { const { data, error } = await supabase.from('stories').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }); if (error) throw error; list.innerHTML = ''; if (!data.length) { list.innerHTML = `<p class="text-center text-gray-500 py-4 bg-gray-50 dark:bg-gray-700 rounded-lg">Belum ada karya.</p>`; return; } data.forEach(story => { const item = document.createElement('div'); item.className = 'flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg'; const coverPath = story.cover_url ? new URL(story.cover_url).pathname.split('/stories/')[1] : ''; item.innerHTML = `<div class="flex items-center space-x-4 flex-1 overflow-hidden"><img src="${story.cover_url || 'https://placehold.co/40x40/6d28d9/ffffff?text=K'}" class="w-10 h-10 rounded object-cover flex-shrink-0"><div class="flex-1 overflow-hidden"><p class="font-semibold clamp-1" title="${escapeHtml(story.title)}">${story.title}</p><p class="text-xs text-gray-500 dark:text-gray-400">${story.category||'N/A'} &middot; ${new Date(story.created_at).toLocaleDateString('id-ID')}</p></div></div><div class="flex space-x-3 ml-4"><button class="view-btn text-blue-500 h-full">Lihat</button><button class="edit-btn text-green-500 h-full">Edit</button><button class="delete-btn text-red-500 h-full">Hapus</button></div>`; item.querySelector('.view-btn').addEventListener('click', () => openViewer(story)); item.querySelector('.edit-btn').addEventListener('click', () => openEditModal(story)); item.querySelector('.delete-btn').addEventListener('click', () => deleteStory(story.id, story.file_path, coverPath)); list.appendChild(item); }); } catch (error) { list.innerHTML = `<p class="text-red-500">Gagal memuat daftar.</p>`; } }
     
@@ -813,6 +1089,7 @@
             showToast('Pengunjung berhasil diblokir sementara.', 'success');
             closeKickModal();
             loadActiveVisitors();
+            loadBlockedVisitors();
         } catch (error) {
             showToast(`Gagal memblokir: ${error.message}`, 'error');
         }
@@ -830,6 +1107,7 @@
     window.openKickMessageModal = openKickMessageModal;
     window.closeKickMessageModal = closeKickMessageModal;
     window.sendKickMessage = sendKickMessage;
+    window.unblockVisitor = unblockVisitor;
     </script>
 </body>
 </html>
