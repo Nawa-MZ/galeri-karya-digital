@@ -105,7 +105,7 @@
             100% { background-position: 0% 50%; }
         }
         
-        /* CSS BARU UNTUK KARTU CERITA */
+        /* CSS UNTUK KARTU CERITA */
         .btn-gradient {
             background-image: linear-gradient(to right, #8b5cf6, #a855f7);
             transition: all 0.3s ease;
@@ -149,7 +149,7 @@
                     <i class="fas fa-pencil mr-2"></i>Tulis Namamu
                 </button>
                 <button id="darkModeToggle" title="Ubah Tema" class="text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400"><i id="moonIcon" class="fas fa-moon text-xl"></i><i id="sunIcon" class="fas fa-sun text-xl hidden"></i></button>
-                <a href="profil.html" title="Tentang Penulis" class="text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400"><i class="fas fa-user-pen text-xl"></i></a>
+                <button id="profileBtn" title="Tentang Penulis" class="text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400"><i class="fas fa-user-pen text-xl"></i></button>
                 <button id="adminBtn" title="Ruang Kreasi" class="text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400"><i class="fas fa-feather-pointed text-xl"></i></button>
                 <button id="logoutBtn" class="hidden bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 text-sm font-medium"><i class="fas fa-right-from-bracket mr-2"></i>Keluar</button>
             </div>
@@ -194,7 +194,6 @@
         <div id="loginPage" class="hidden fade-in max-w-md mx-auto"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8"><div class="text-center mb-8"><i class="fas fa-key text-4xl text-violet-500 mb-4"></i><h2 class="text-3xl font-bold dark:text-white">Masuk Ruang Penulis</h2><p class="dark:text-gray-300">Login untuk mengelola karyamu.</p></div><form id="loginForm" class="space-y-6"><div><label for="loginEmail" class="block text-sm font-medium dark:text-gray-300 mb-1">Email</label><input type="email" name="email" id="loginEmail" required class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><div><label for="loginPassword" class="block text-sm font-medium dark:text-gray-300 mb-1">Password</label><input type="password" name="password" id="loginPassword" required class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><button type="submit" id="loginSubmitBtn" class="w-full bg-violet-600 text-white py-3 rounded-lg hover:bg-violet-700 font-semibold flex items-center justify-center"><span id="loginBtnText">Masuk</span><div id="loginSpinner" class="hidden loading-spinner ml-3"></div></button></form><div class="mt-6 text-center"><button id="backToHomeBtn" class="text-violet-600 dark:text-violet-400 hover:underline">← Kembali</button></div></div></div>
         <div id="adminPage" class="hidden fade-in"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8"><div class="flex justify-between items-start mb-8"><div><h2 class="text-4xl font-bold dark:text-white">Ruang Kreasi</h2><p class="dark:text-gray-300">Selamat datang, <span id="adminEmail" class="font-semibold text-violet-600 dark:text-violet-400"></span>.</p></div></div><div class="mb-10 p-6 bg-gradient-to-r from-violet-50 to-fuchsia-50 dark:from-violet-900/50 dark:to-fuchsia-900/50 rounded-lg border dark:border-violet-800"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-pen-to-square mr-3"></i>Publikasikan Karya Baru</h3><form id="uploadForm" class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label for="storyTitle" class="block text-sm font-medium">Judul</label><input type="text" name="storyTitle" id="storyTitle" required class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><div><label for="storyCategory" class="block text-sm font-medium">Kategori</label><select name="storyCategory" id="storyCategory" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"><option>Fiksi</option><option>Puisi</option><option>Cerpen</option><option>Non-Fiksi</option><option>Lainnya</option></select></div><div class="md:col-span-2"><label for="storyDescription" class="block text-sm font-medium">Sinopsis</label><textarea name="storyDescription" id="storyDescription" rows="3" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label for="coverFile" class="block text-sm font-medium">Cover</label><input type="file" name="coverFile" id="coverFile" accept="image/*" class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div><label for="storyFile" class="block text-sm font-medium">File (PDF)</label><input type="file" name="storyFile" id="storyFile" accept=".pdf" required class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div class="md:col-span-2"><button type="submit" id="uploadSubmitBtn" class="bg-violet-600 text-white px-6 py-3 rounded-lg hover:bg-violet-700 font-semibold flex items-center justify-center shadow-lg"><i class="fas fa-paper-plane mr-2"></i><span id="uploadBtnText">Publikasikan</span><div id="uploadSpinner" class="hidden loading-spinner ml-3"></div></button></div></form></div><div><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-layer-group mr-3"></i>Karya Terpublikasi</h3><div id="adminStoryList" class="space-y-4"></div></div><div class="mt-10"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-users-rays mr-3 text-cyan-400"></i>Pengunjung Aktif</h3><p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Daftar pengunjung yang aktif dalam 3 menit terakhir. Refresh halaman untuk data terbaru.</p><div id="activeVisitorsList" class="space-y-3"><div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div></div></div><div class="mt-10"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-user-lock mr-3 text-red-400"></i>Manajemen Blokir</h3><p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Daftar pengunjung yang aksesnya sedang diblokir atau ditendang sementara.</p><div id="blockedVisitorsList" class="space-y-3"><div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div></div></div></div></div>
         <div id="profilePage" class="hidden fade-in max-w-4xl mx-auto"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"><div class="h-48 bg-gradient-to-r from-violet-500 to-fuchsia-500"></div><div class="relative"><div class="absolute -top-16 left-8"><div class="w-32 h-32 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center shadow-lg border-4 dark:border-gray-800"><i class="fas fa-user-astronaut text-6xl text-violet-500"></i></div></div></div><div class="pt-20 px-8 pb-8"><h2 class="text-3xl font-bold" id="profileName"></h2><p class="dark:text-gray-400" id="profileEmail"></p><p class="mt-4" id="profileBio">Seorang penulis yang passionate dalam menciptakan cerita-cerita menarik dan menginspirasi. Bergabung dengan Galeri Karya Digital untuk berbagi imajinasi.</p><div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 text-center"><div class="bg-violet-50 dark:bg-violet-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-violet-600 dark:text-violet-400" id="statStories">0</p><p>Karya</p></div><div class="bg-blue-50 dark:bg-blue-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-blue-600 dark:text-blue-400" id="statViews">0</p><p>Total Dibaca</p></div><div class="bg-amber-50 dark:bg-amber-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-amber-600 dark:text-amber-400" id="statRating">N/A</p><p>Rating Rata2</p></div><div class="bg-pink-50 dark:bg-pink-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-pink-600 dark:text-pink-400" id="statHearts">0</p><p>Total Rating</p></div></div></div><div class="px-8 pb-8"><h3 class="text-xl font-bold mb-4">Karya Terbaru Penulis</h3><div id="recentStories" class="space-y-3"></div></div><div class="bg-gray-50 dark:bg-gray-900/50 px-8 py-4 text-center"><button id="backFromProfileBtn" class="text-violet-600 dark:text-violet-400 hover:underline">← Kembali</button></div></div></div>
-        
         <div id="viewerPage" class="hidden fade-in">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8">
                 <div class="flex justify-between items-center mb-4">
@@ -329,7 +328,7 @@
     const storiesPerPage = 8;
     let heartbeatInterval = null;
 
-    const pages = { home: document.getElementById('homePage'), login: document.getElementById('loginPage'), admin: document.getElementById('adminPage'), profile: document.getElementById('profilePage'), viewer: document.getElementById('viewerPage') };
+    const pages = { home: document.getElementById('homePage'), login: document.getElementById('loginPage'), admin: document.getElementById('adminPage'), viewer: document.getElementById('viewerPage'), profile: document.getElementById('profilePage') };
     const darkModeToggle = document.getElementById('darkModeToggle');
     const moonIcon = document.getElementById('moonIcon');
     const sunIcon = document.getElementById('sunIcon');
@@ -405,6 +404,7 @@
     function setupEventListeners() {
         document.getElementById('homeBtn').addEventListener('click', (e) => { e.preventDefault(); currentPage = 1; loadStoryCatalog(); showPage('home'); });
         darkModeToggle.addEventListener('click', toggleTheme);
+        document.getElementById('profileBtn').addEventListener('click', handleProfileClick);
         document.getElementById('adminBtn').addEventListener('click', handleAdminClick);
         document.getElementById('logoutBtn').addEventListener('click', logout);
         document.getElementById('loginForm').addEventListener('submit', handleLogin);
@@ -714,7 +714,54 @@
         }
     }
     
-    function handleProfileClick() { if (!visitorName || visitorName === 'Guest') { return showToast('Masukkan nama dulu untuk melihat profil penulis.', 'warning'); } showPage('profile'); loadProfileData(); }
+    function handleProfileClick() {
+        if (!visitorName || visitorName === 'Guest') {
+            return showToast('Masukkan nama dulu untuk melihat profil penulis.', 'warning');
+        }
+        showPage('profile');
+        loadProfileData();
+    }
+
+    async function loadProfileData() {
+        document.getElementById('profileName').textContent = "Profil Penulis";
+        document.getElementById('profileEmail').textContent = "karya@penulis.com";
+        let storyCount = 0, recentStories = [], avgRating = "N/A", totalRatings = 0, totalViews = 0;
+        try {
+            const { data: stories, error } = await supabase.from('stories').select('id, title, created_at, cover_url, file_url, description, category, view_count').eq('user_id', AUTHOR_USER_ID).order('created_at', { ascending: false });
+            if (error) throw error;
+            storyCount = stories.length;
+            recentStories = stories.slice(0, 3);
+            totalViews = stories.reduce((sum, s) => sum + (s.view_count || 0), 0);
+            if (storyCount > 0) {
+                const storyIds = stories.map(s => s.id);
+                const { data: ratings, error: rError } = await supabase.from('ratings').select('rating').in('story_id', storyIds);
+                if (rError) throw rError;
+                totalRatings = ratings.length;
+                if (totalRatings > 0) {
+                    avgRating = (ratings.reduce((s, r) => s + r.rating, 0) / totalRatings).toFixed(1);
+                }
+            }
+        } catch (error) {
+            showToast('Gagal memuat data profil penulis.', 'error');
+        }
+        document.getElementById('statStories').textContent = storyCount;
+        document.getElementById('statRating').textContent = avgRating;
+        document.getElementById('statViews').textContent = totalViews.toLocaleString('id-ID');
+        document.getElementById('statHearts').textContent = totalRatings.toLocaleString('id-ID');
+        const recentContainer = document.getElementById('recentStories');
+        recentContainer.innerHTML = '';
+        if (recentStories.length > 0) {
+            recentStories.forEach(story => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700';
+                item.onclick = () => openViewer(story);
+                item.innerHTML = `<i class="fas fa-file-alt text-violet-500 text-xl mr-4"></i><div><p class="font-semibold">${story.title}</p><p class="text-sm text-gray-500 dark:text-gray-400">${new Date(story.created_at).toLocaleDateString('id-ID')}</p></div>`;
+                recentContainer.appendChild(item);
+            });
+        } else {
+            recentContainer.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">Penulis belum memiliki karya.</p>';
+        }
+    }
 
     function escapeHtml(str) { if (typeof str !== 'string') return ''; return str.replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
     async function handleLogin(e) { e.preventDefault(); const form = e.target; const btn = form.querySelector('button[type="submit"]'); const { email, password } = Object.fromEntries(new FormData(form)); btn.disabled = true; try { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (error) throw error; showToast(`🎉 Selamat datang kembali!`, 'success'); showPage('admin'); loadAdminStoryList(); } catch (error) { showToast(`Login gagal: ${error.message}`, 'error'); } finally { btn.disabled = false; form.reset(); } }
@@ -908,7 +955,20 @@
         </div>`;
     }
 
-    async function handleSetRating(storyId, ratingValue) { try { const { error } = await supabase.from('ratings').upsert({ story_id: storyId, visitor_uuid: visitorUUID, rating: ratingValue }); if (error) throw error; showToast(`Kamu memberi ${ratingValue} bintang!`, 'success'); userRatings.set(parseInt(storyId), ratingValue); const idx = allRatings.findIndex(r => r.story_id == storyId && r.visitor_uuid == visitorUUID); if (idx > -1) allRatings[idx].rating = ratingValue; else allRatings.push({ story_id: parseInt(storyId), visitor_uuid: visitorUUID, rating: ratingValue }); redrawStoryCard(storyId); } catch (error) { showToast(`Gagal menyimpan rating: ${error.message}`, 'error'); } }
+    async function handleSetRating(storyId, ratingValue) { 
+        try { 
+            const { error } = await supabase.from('ratings').upsert({ story_id: storyId, visitor_uuid: visitorUUID, rating: ratingValue }, { onConflict: 'story_id, visitor_uuid' }); 
+            if (error) throw error; 
+            showToast(`Kamu memberi ${ratingValue} bintang!`, 'success'); 
+            userRatings.set(parseInt(storyId), ratingValue); 
+            const idx = allRatings.findIndex(r => r.story_id == storyId && r.visitor_uuid == visitorUUID); 
+            if (idx > -1) allRatings[idx].rating = ratingValue; 
+            else allRatings.push({ story_id: parseInt(storyId), visitor_uuid: visitorUUID, rating: ratingValue }); 
+            redrawStoryCard(storyId); 
+        } catch (error) { 
+            showToast(`Gagal menyimpan rating: ${error.message}`, 'error'); 
+        } 
+    }
     
     function redrawStoryCard(storyId) {
         const card = document.querySelector(`.rating-stars[data-story-id='${storyId}']`).closest('.story-card');
@@ -1098,8 +1158,32 @@
     function openEditModal(story) { document.getElementById('editStoryId').value = story.id; document.getElementById('editStoryTitle').value = story.title; document.getElementById('editStoryDescription').value = story.description; document.getElementById('editStoryCategory').value = story.category || 'Lainnya'; document.getElementById('editModal').classList.remove('hidden'); }
     async function handleUpdateStory(e) { e.preventDefault(); const storyId = document.getElementById('editStoryId').value; const form = e.target; const { editStoryTitle, editStoryDescription, editStoryCategory } = Object.fromEntries(new FormData(form)); try { const { error } = await supabase.from('stories').update({ title: editStoryTitle, description: editStoryDescription, category: editStoryCategory }).eq('id', storyId); if (error) throw error; showToast('Karya diperbarui!', 'success'); document.getElementById('editModal').classList.add('hidden'); await Promise.all([loadStoryCatalog(), loadAdminStoryList()]); } catch (error) { showToast(`Gagal: ${error.message}`, 'error'); } }
     async function deleteStory(id, filePath, coverPath) { if (!confirm(`Yakin?`)) return; try { const filesToDelete = []; if(filePath) filesToDelete.push(filePath); if (coverPath) filesToDelete.push(coverPath); if(filesToDelete.length > 0) { await supabase.storage.from('stories').remove(filesToDelete); } await supabase.from('stories').delete().eq('id', id); showToast('Karya dihapus.', 'success'); await Promise.all([loadStoryCatalog(), loadAdminStoryList()]); } catch(error) { showToast(`Gagal: ${error.message}`, 'error'); } }
-    async function loadProfileData() { document.getElementById('profileName').textContent = "Profil Penulis"; document.getElementById('profileEmail').textContent = "karya@penulis.com"; let storyCount = 0, recentStories = [], avgRating = "N/A", totalRatings = 0, totalViews = 0; try { const { data: stories, error } = await supabase.from('stories').select('id, title, created_at, cover_url, file_url, description, category, view_count').eq('user_id', AUTHOR_USER_ID).order('created_at', { ascending: false }); if (error) throw error; storyCount = stories.length; recentStories = stories.slice(0, 3); totalViews = stories.reduce((sum, s) => sum + (s.view_count || 0), 0); if (storyCount > 0) { const storyIds = stories.map(s => s.id); const { data: ratings, error: rError } = await supabase.from('ratings').select('rating').in('story_id', storyIds); if (rError) throw rError; totalRatings = ratings.length; if (totalRatings > 0) { avgRating = (ratings.reduce((s, r) => s + r.rating, 0) / totalRatings).toFixed(1); } } } catch (error) { showToast('Gagal memuat data profil penulis.', 'error'); } document.getElementById('statStories').textContent = storyCount; document.getElementById('statRating').textContent = avgRating; document.getElementById('statViews').textContent = totalViews.toLocaleString('id-ID'); document.getElementById('statHearts').textContent = totalRatings.toLocaleString('id-ID'); const recentContainer = document.getElementById('recentStories'); recentContainer.innerHTML = ''; if (recentStories.length > 0) { recentStories.forEach(story => { const item = document.createElement('div'); item.className = 'flex items-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700'; item.onclick = () => openViewer(story); item.innerHTML = `<i class="fas fa-file-alt text-violet-500 text-xl mr-4"></i><div><p class="font-semibold">${story.title}</p><p class="text-sm text-gray-500 dark:text-gray-400">${new Date(story.created_at).toLocaleDateString('id-ID')}</p></div>`; recentContainer.appendChild(item); }); } else { recentContainer.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">Penulis belum memiliki karya.</p>'; } }
-    function showToast(message, type = 'info', duration = 3000) { const toast = document.getElementById('toast'); const toastMessage = document.getElementById('toastMessage'); toast.classList.remove('bg-green-500','bg-red-500','bg-blue-500'); if (type === 'success') toast.classList.add('bg-green-500'); else if (type === 'error') toast.classList.add('bg-red-500'); else toast.classList.add('bg-blue-500'); toastMessage.textContent = message; toast.classList.remove('invisible'); requestAnimationFrame(() => { toast.classList.remove('opacity-0'); }); setTimeout(() => { toast.classList.add('opacity-0'); setTimeout(() => { toast.classList.add('invisible'); }, 300); }, duration); }
+    
+    function showToast(message, type = 'info', duration = 3000) {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        toast.classList.remove('bg-green-500', 'bg-red-500', 'bg-blue-500', 'bg-yellow-500');
+        
+        if (type === 'success') {
+            toast.classList.add('bg-green-500');
+        } else if (type === 'error') {
+            toast.classList.add('bg-red-500');
+        } else if (type === 'warning') {
+            toast.classList.add('bg-yellow-500');
+        } else {
+            toast.classList.add('bg-blue-500');
+        }
+
+        toastMessage.textContent = message;
+        toast.classList.remove('invisible', 'opacity-0');
+        
+        setTimeout(() => {
+            toast.classList.add('opacity-0');
+            setTimeout(() => {
+                toast.classList.add('invisible');
+            }, 300);
+        }, duration);
+    }
     
     window.deleteComment = deleteComment;
     window.openKickModal = openKickModal;
