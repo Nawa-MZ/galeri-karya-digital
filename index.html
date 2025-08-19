@@ -149,6 +149,10 @@
                     <i class="fas fa-pencil mr-2"></i>Tulis Namamu
                 </button>
                 <button id="darkModeToggle" title="Ubah Tema" class="text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400"><i id="moonIcon" class="fas fa-moon text-xl"></i><i id="sunIcon" class="fas fa-sun text-xl hidden"></i></button>
+                <button id="likesBtn" title="Karya Disukai" class="text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 relative">
+                    <i class="fas fa-heart text-xl"></i>
+                    <span id="likesCountBadge" class="hidden absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">0</span>
+                </button>
                 <button id="profileBtn" title="Tentang Penulis" class="text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400"><i class="fas fa-user-pen text-xl"></i></button>
                 <button id="adminBtn" title="Ruang Kreasi" class="text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400"><i class="fas fa-feather-pointed text-xl"></i></button>
                 <button id="logoutBtn" class="hidden bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 text-sm font-medium"><i class="fas fa-right-from-bracket mr-2"></i>Keluar</button>
@@ -192,7 +196,7 @@
             <div id="emptyState" class="hidden text-center py-20 bg-gray-100 dark:bg-gray-800 rounded-lg"><i class="fas fa-book-blank text-6xl text-violet-300 mb-4"></i><h3 class="text-2xl font-bold">Galeri Masih Sepi</h3><p>Jadilah yang pertama mempublikasikan karya!</p></div>
         </div>
         <div id="loginPage" class="hidden fade-in max-w-md mx-auto"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8"><div class="text-center mb-8"><i class="fas fa-key text-4xl text-violet-500 mb-4"></i><h2 class="text-3xl font-bold dark:text-white">Masuk Ruang Penulis</h2><p class="dark:text-gray-300">Login untuk mengelola karyamu.</p></div><form id="loginForm" class="space-y-6"><div><label for="loginEmail" class="block text-sm font-medium dark:text-gray-300 mb-1">Email</label><input type="email" name="email" id="loginEmail" required class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><div><label for="loginPassword" class="block text-sm font-medium dark:text-gray-300 mb-1">Password</label><input type="password" name="password" id="loginPassword" required class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><button type="submit" id="loginSubmitBtn" class="w-full bg-violet-600 text-white py-3 rounded-lg hover:bg-violet-700 font-semibold flex items-center justify-center"><span id="loginBtnText">Masuk</span><div id="loginSpinner" class="hidden loading-spinner ml-3"></div></button></form><div class="mt-6 text-center"><button id="backToHomeBtn" class="text-violet-600 dark:text-violet-400 hover:underline">← Kembali</button></div></div></div>
-        <div id="adminPage" class="hidden fade-in"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8"><div class="flex justify-between items-start mb-8"><div><h2 class="text-4xl font-bold dark:text-white">Ruang Kreasi</h2><p class="dark:text-gray-300">Selamat datang, <span id="adminEmail" class="font-semibold text-violet-600 dark:text-violet-400"></span>.</p></div></div><div class="mb-10 p-6 bg-gradient-to-r from-violet-50 to-fuchsia-50 dark:from-violet-900/50 dark:to-fuchsia-900/50 rounded-lg border dark:border-violet-800"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-pen-to-square mr-3"></i>Publikasikan Karya Baru</h3><form id="uploadForm" class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label for="storyTitle" class="block text-sm font-medium">Judul</label><input type="text" name="storyTitle" id="storyTitle" required class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><div><label for="storyCategory" class="block text-sm font-medium">Kategori</label><select name="storyCategory" id="storyCategory" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"><option>Fiksi</option><option>Puisi</option><option>Cerpen</option><option>Non-Fiksi</option><option>Lainnya</option></select></div><div class="md:col-span-2"><label for="storyDescription" class="block text-sm font-medium">Sinopsis</label><textarea name="storyDescription" id="storyDescription" rows="3" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label for="coverFile" class="block text-sm font-medium">Cover</label><input type="file" name="coverFile" id="coverFile" accept="image/*" class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div><label for="storyFile" class="block text-sm font-medium">File (PDF)</label><input type="file" name="storyFile" id="storyFile" accept=".pdf" required class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div class="md:col-span-2"><button type="submit" id="uploadSubmitBtn" class="bg-violet-600 text-white px-6 py-3 rounded-lg hover:bg-violet-700 font-semibold flex items-center justify-center shadow-lg"><i class="fas fa-paper-plane mr-2"></i><span id="uploadBtnText">Publikasikan</span><div id="uploadSpinner" class="hidden loading-spinner ml-3"></div></button></div></form></div><div><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-layer-group mr-3"></i>Karya Terpublikasi</h3><div id="adminStoryList" class="space-y-4"></div></div><div class="mt-10"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-users-rays mr-3 text-cyan-400"></i>Pengunjung Aktif</h3><p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Daftar pengunjung yang aktif dalam 3 menit terakhir. Refresh halaman untuk data terbaru.</p><div id="activeVisitorsList" class="space-y-3"><div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div></div></div><div class="mt-10"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-user-lock mr-3 text-red-400"></i>Manajemen Blokir</h3><p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Daftar pengunjung yang aksesnya sedang diblokir atau ditendang sementara.</p><div id="blockedVisitorsList" class="space-y-3"><div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div></div></div></div></div>
+        <div id="adminPage" class="hidden fade-in"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8"><div class="flex justify-between items-start mb-8"><div><h2 class="text-4xl font-bold dark:text-white">Ruang Kreasi</h2><p class="dark:text-gray-300">Selamat datang, <span id="adminEmail" class="font-semibold text-violet-600 dark:text-violet-400"></span>.</p></div></div><div class="mb-10 p-6 bg-gradient-to-r from-violet-50 to-fuchsia-50 dark:from-violet-900/50 dark:to-fuchsia-900/50 rounded-lg border dark:border-violet-800"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-pen-to-square mr-3"></i>Publikasikan Karya Baru</h3><form id="uploadForm" class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label for="storyTitle" class="block text-sm font-medium">Judul</label><input type="text" name="storyTitle" id="storyTitle" required class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><div><label for="storyCategory" class="block text-sm font-medium">Kategori</label><select name="storyCategory" id="storyCategory" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"><option>Fiksi</option><option>Puisi</option><option>Cerpen</option><option>Non-Fiksi</option><option>Lainnya</option></select></div><div class="md:col-span-2"><label for="storyDescription" class="block text-sm font-medium">Sinopsis</label><textarea name="storyDescription" id="storyDescription" rows="3" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label for="coverFile" class="block text-sm font-medium">Cover</label><input type="file" name="coverFile" id="coverFile" accept="image/*" class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div><label for="storyFile" class="block text-sm font-medium">File (PDF)</label><input type="file" name="storyFile" id="storyFile" accept=".pdf" required class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div class="md:col-span-2"><button type="submit" id="uploadSubmitBtn" class="bg-violet-600 text-white px-6 py-3 rounded-lg hover:bg-violet-700 font-semibold flex items-center justify-center shadow-lg"><i class="fas fa-paper-plane mr-2"></i><span id="uploadBtnText">Publikasikan</span><div id="uploadSpinner" class="hidden loading-spinner ml-3"></div></button></div></form></div><div><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-layer-group mr-3"></i>Karya Terpublikasi</h3><div id="adminStoryList" class="space-y-4"></div></div><div class="mt-10"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-users-cog mr-3 text-sky-400"></i>Manajemen Pengunjung</h3><p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Lihat semua pengunjung yang pernah datang. Beri hukuman atau izin khusus bahkan saat mereka sedang offline.</p><div id="allVisitorsList" class="space-y-3"><div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div></div></div></div></div>
         <div id="profilePage" class="hidden fade-in max-w-4xl mx-auto"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"><div class="h-48 bg-gradient-to-r from-violet-500 to-fuchsia-500"></div><div class="relative"><div class="absolute -top-16 left-8"><div class="w-32 h-32 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center shadow-lg border-4 dark:border-gray-800"><i class="fas fa-user-astronaut text-6xl text-violet-500"></i></div></div></div><div class="pt-20 px-8 pb-8"><h2 class="text-3xl font-bold" id="profileName"></h2><p class="dark:text-gray-400" id="profileEmail"></p><p class="mt-4" id="profileBio">Seorang penulis yang passionate dalam menciptakan cerita-cerita menarik dan menginspirasi. Bergabung dengan Galeri Karya Digital untuk berbagi imajinasi.</p><div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 text-center"><div class="bg-violet-50 dark:bg-violet-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-violet-600 dark:text-violet-400" id="statStories">0</p><p>Karya</p></div><div class="bg-blue-50 dark:bg-blue-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-blue-600 dark:text-blue-400" id="statViews">0</p><p>Total Dibaca</p></div><div class="bg-amber-50 dark:bg-amber-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-amber-600 dark:text-amber-400" id="statRating">N/A</p><p>Rating Rata2</p></div><div class="bg-pink-50 dark:bg-pink-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-pink-600 dark:text-pink-400" id="statHearts">0</p><p>Total Rating</p></div></div></div><div class="px-8 pb-8"><h3 class="text-xl font-bold mb-4">Karya Terbaru Penulis</h3><div id="recentStories" class="space-y-3"></div></div><div class="bg-gray-50 dark:bg-gray-900/50 px-8 py-4 text-center"><button id="backFromProfileBtn" class="text-violet-600 dark:text-violet-400 hover:underline">← Kembali</button></div></div></div>
         <div id="viewerPage" class="hidden fade-in">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8">
@@ -214,6 +218,22 @@
                     <div id="visitorPrompt" class="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg"><p>Masukkan nama di halaman utama untuk ikut berdiskusi!</p></div>
                     <div id="commentList" class="mt-6 space-y-4"></div>
                 </div>
+            </div>
+        </div>
+        <div id="likesPage" class="hidden fade-in">
+            <div class="flex items-center mb-8">
+                <i class="fas fa-heart-crack text-4xl text-red-400 mr-4"></i>
+                <div>
+                    <h2 class="text-4xl font-bold">Karya yang Kamu Sukai</h2>
+                    <p class="text-gray-500 dark:text-gray-400">Daftar ini disimpan di browsermu. Kembali lagi nanti untuk melihatnya!</p>
+                </div>
+            </div>
+            <div id="likedStoriesCatalog" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 min-h-[300px]">
+            </div>
+            <div id="noLikedStories" class="hidden text-center py-20 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                <i class="fas fa-heart text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                <h3 class="text-2xl font-bold">Kamu Belum Punya Karya Favorit</h3>
+                <p class="text-gray-500">Klik ikon hati di setiap karya untuk menyimpannya di sini.</p>
             </div>
         </div>
     </main>
@@ -323,12 +343,12 @@
     const AUTHOR_USER_ID = '331951e7-0a79-4c15-9755-41ea156ebda0';
     
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    let currentUser = null, allRatings = [], userRatings = new Map(), currentStoryId = null, visitorName = null, visitorUUID = null;
+    let currentUser = null, allRatings = [], userRatings = new Map(), currentStoryId = null, visitorName = null, visitorUUID = null, allLikes = [], userLikes = new Set();
     let currentPage = 1;
     const storiesPerPage = 8;
     let heartbeatInterval = null;
 
-    const pages = { home: document.getElementById('homePage'), login: document.getElementById('loginPage'), admin: document.getElementById('adminPage'), viewer: document.getElementById('viewerPage'), profile: document.getElementById('profilePage') };
+    const pages = { home: document.getElementById('homePage'), login: document.getElementById('loginPage'), admin: document.getElementById('adminPage'), viewer: document.getElementById('viewerPage'), profile: document.getElementById('profilePage'), likes: document.getElementById('likesPage') };
     const darkModeToggle = document.getElementById('darkModeToggle');
     const moonIcon = document.getElementById('moonIcon');
     const sunIcon = document.getElementById('sunIcon');
@@ -404,6 +424,7 @@
     function setupEventListeners() {
         document.getElementById('homeBtn').addEventListener('click', (e) => { e.preventDefault(); currentPage = 1; loadStoryCatalog(); showPage('home'); });
         darkModeToggle.addEventListener('click', toggleTheme);
+        document.getElementById('likesBtn').addEventListener('click', loadLikedStories);
         document.getElementById('profileBtn').addEventListener('click', handleProfileClick);
         document.getElementById('adminBtn').addEventListener('click', handleAdminClick);
         document.getElementById('logoutBtn').addEventListener('click', logout);
@@ -432,6 +453,12 @@
             document.getElementById('nameInputSection').classList.remove('hidden');
         });
         document.getElementById('promptNameAgainBtn').addEventListener('click', () => {
+            const hasGrantedChance = localStorage.getItem('nameChangeGranted') === 'true';
+            if (hasGrantedChance) {
+                namePromptModal.classList.remove('hidden');
+                return;
+            }
+
             const lastChange = localStorage.getItem('nameChangeTimestamp');
             const cooldown = 10 * 60 * 60 * 1000; // 10 jam dalam milidetik
 
@@ -590,7 +617,14 @@
             visitorName = nameInput;
             localStorage.setItem('visitorName', visitorName);
             localStorage.setItem('nameChangeTimestamp', new Date().getTime());
-            await updateVisitorStatus({ visitor_name: visitorName, skip_reason: null });
+            
+            await updateVisitorStatus({ 
+                visitor_name: visitorName, 
+                skip_reason: null, 
+                name_change_granted: false 
+            });
+            localStorage.removeItem('nameChangeGranted');
+
             displayCoolWelcome();
             namePromptModal.classList.add('hidden');
             loadStoryCatalog();
@@ -623,69 +657,68 @@
         if (currentUser) {
             showPage('admin');
             loadAdminStoryList();
-            loadActiveVisitors();
-            loadBlockedVisitors();
+            loadAllVisitors();
         } else {
             showPage('login');
         }
     }
     
-    async function loadBlockedVisitors() {
-        const listContainer = document.getElementById('blockedVisitorsList');
+    async function loadAllVisitors() {
+        const listContainer = document.getElementById('allVisitorsList');
         listContainer.innerHTML = '<div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div>';
 
         try {
             const { data: visitors, error } = await supabase
                 .from('visitors')
                 .select('*')
-                .not('blocked_until', 'is', null)
-                .gt('blocked_until', new Date().toISOString())
-                .order('blocked_until', { ascending: true });
+                .order('last_seen', { ascending: false });
 
             if (error) throw error;
 
             if (visitors.length === 0) {
-                listContainer.innerHTML = '<p class="text-center text-gray-500 py-4">Tidak ada pengunjung yang sedang diblokir.</p>';
+                listContainer.innerHTML = '<p class="text-center text-gray-500 py-4">Belum ada pengunjung sama sekali.</p>';
                 return;
             }
 
+            const threeMinutesAgo = new Date(Date.now() - 3 * 60 * 1000);
             listContainer.innerHTML = visitors.map(visitor => {
-                const blockedUntil = new Date(visitor.blocked_until);
-                const now = new Date();
-                const isPermanent = (blockedUntil.getFullYear() > new Date().getFullYear() + 10);
-                let timeRemaining;
+                const lastSeen = new Date(visitor.last_seen);
+                const isOnline = lastSeen > threeMinutesAgo;
+                const isBlocked = visitor.blocked_until && new Date(visitor.blocked_until) > new Date();
 
-                if (isPermanent) {
-                    timeRemaining = 'Permanen';
-                } else if (blockedUntil > now) {
-                    const diffMs = blockedUntil - now;
-                    const diffHrs = Math.floor(diffMs / 3600000);
-                    const diffMins = Math.round((diffMs % 3600000) / 60000);
-                    timeRemaining = `Sisa ${diffHrs} jam ${diffMins} mnt`;
+                let statusIndicator, statusText;
+                if (isBlocked) {
+                    statusIndicator = 'bg-red-500';
+                    statusText = 'Diblokir';
+                } else if (isOnline) {
+                    statusIndicator = 'bg-green-500 animate-pulse';
+                    statusText = 'Online';
                 } else {
-                    timeRemaining = 'Kadaluarsa';
+                    statusIndicator = 'bg-gray-400';
+                    statusText = 'Offline';
                 }
-
+                
                 return `
-                <div class="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800/50">
+                <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border dark:border-gray-700">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3 overflow-hidden">
-                            <i class="fas fa-user-slash fa-fw text-xl text-red-500"></i>
+                            <div class="flex-shrink-0 flex flex-col items-center w-12">
+                                <span class="w-3 h-3 rounded-full ${statusIndicator}"></span>
+                                <span class="text-xs mt-1 dark:text-gray-400">${statusText}</span>
+                            </div>
                             <div class="overflow-hidden">
                                 <p class="font-semibold clamp-1">${escapeHtml(visitor.visitor_name)}</p>
-                                <p class="text-xs text-red-600 dark:text-red-400">
-                                    Diblokir hingga: ${isPermanent ? 'Permanen' : blockedUntil.toLocaleString('id-ID')}
-                                    <span class="font-bold">(${timeRemaining})</span>
-                                </p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Terakhir dilihat: ${lastSeen.toLocaleString('id-ID')}</p>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="openKickModal('${visitor.visitor_uuid}')" title="Ubah Durasi Blokir" class="bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold hover:bg-yellow-600">
-                                Edit
+                        <div class="flex items-center space-x-2 flex-shrink-0 ml-2">
+                            <button onclick="grantNameChange('${visitor.visitor_uuid}')" title="Beri 1x kesempatan ganti nama" class="bg-sky-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-sky-600 ${visitor.name_change_granted ? 'opacity-50 cursor-not-allowed' : ''}" ${visitor.name_change_granted ? 'disabled' : ''}>
+                                <i class="fas fa-gift"></i>
                             </button>
-                            <button onclick="unblockVisitor('${visitor.visitor_uuid}')" title="Buka Blokir Sekarang" class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold hover:bg-green-600">
-                                Buka
+                            <button onclick="openKickModal('${visitor.visitor_uuid}')" title="${isBlocked ? 'Ubah Durasi Blokir' : 'Blokir Pengunjung'}" class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-yellow-600">
+                                <i class="fas fa-user-clock"></i>
                             </button>
+                            ${isBlocked ? `<button onclick="unblockVisitor('${visitor.visitor_uuid}')" title="Buka Blokir" class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-green-600"><i class="fas fa-unlock"></i></button>` : ''}
                         </div>
                     </div>
                 </div>
@@ -693,7 +726,23 @@
             }).join('');
 
         } catch (error) {
-            listContainer.innerHTML = `<p class="text-red-500">Gagal memuat daftar blokir: ${error.message}</p>`;
+            listContainer.innerHTML = `<p class="text-red-500">Gagal memuat daftar pengunjung: ${error.message}</p>`;
+        }
+    }
+
+    async function grantNameChange(uuid) {
+        if (!confirm('Yakin ingin memberi pengunjung ini 1x kesempatan untuk ganti nama?')) return;
+        try {
+            const { error } = await supabase
+                .from('visitors')
+                .update({ name_change_granted: true })
+                .eq('visitor_uuid', uuid);
+            
+            if (error) throw error;
+            showToast('Kesempatan ganti nama diberikan!', 'success');
+            loadAllVisitors();
+        } catch (error) {
+            showToast(`Gagal memberi izin: ${error.message}`, 'error');
         }
     }
 
@@ -707,8 +756,7 @@
 
             if (error) throw error;
             showToast('Blokir berhasil dibuka.', 'success');
-            loadBlockedVisitors();
-            loadActiveVisitors();
+            loadAllVisitors();
         } catch (error) {
             showToast(`Gagal membuka blokir: ${error.message}`, 'error');
         }
@@ -784,13 +832,16 @@
                     last_seen: new Date().toISOString(),
                     ...extraData
                 }, { onConflict: 'visitor_uuid' })
-                .select('blocked_until')
+                .select('blocked_until, name_change_granted')
                 .single();
             
             if (error) throw error;
 
-            if (data && data.blocked_until && new Date(data.blocked_until) > new Date()) {
-                lockScreen(data.blocked_until);
+            if (data) {
+                localStorage.setItem('nameChangeGranted', data.name_change_granted);
+                if (data.blocked_until && new Date(data.blocked_until) > new Date()) {
+                    lockScreen(data.blocked_until);
+                }
             }
         } catch (error) {
             console.error("Gagal update status visitor:", error.message);
@@ -855,6 +906,14 @@
             const { data: stories, error: storiesError } = await query.range(from, to);
             if (storiesError) throw storiesError;
 
+            const { data: likesData } = await supabase.from('likes').select('story_id, visitor_uuid');
+            allLikes = likesData || [];
+            userLikes.clear();
+            if (visitorUUID) {
+                allLikes.filter(l => l.visitor_uuid === visitorUUID).forEach(l => userLikes.add(l.story_id));
+            }
+            updateLikesBadge();
+
             const { data: ratingsData } = await supabase.from('ratings').select('story_id, rating, visitor_uuid');
             allRatings = ratingsData || [];
             userRatings.clear();
@@ -896,6 +955,13 @@
             });
         });
 
+        document.querySelectorAll('.like-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                handleLikeClick(parseInt(e.currentTarget.dataset.storyId));
+            });
+        });
+
         document.querySelectorAll('.rating-star').forEach(star => {
             star.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -907,7 +973,7 @@
 
         document.querySelectorAll('.story-card').forEach(card => {
             card.addEventListener('click', (e) => {
-                if (e.target.closest('.read-story-btn') || e.target.closest('.rating-star')) {
+                if (e.target.closest('.read-story-btn') || e.target.closest('.rating-star') || e.target.closest('.like-btn')) {
                     return;
                 }
                 const storyData = card.querySelector('.read-story-btn').dataset.story;
@@ -929,7 +995,7 @@
             : `<div class="w-full h-48 bg-gradient-to-br from-violet-400 to-fuchsia-400 flex items-center justify-center"><i class="fas fa-book-open text-4xl text-white"></i></div>`;
 
         return `
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover-lift story-card flex flex-col" data-title="${escapeHtml(story.title)}" data-category="${story.category||'Lainnya'}">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover-lift story-card flex flex-col" data-story-id="${story.id}">
             <div class="card-image-container relative">
                 ${coverImg}
                 <div class="absolute top-2 right-2 flex flex-col items-end gap-2">
@@ -943,10 +1009,15 @@
             <div class="p-4 flex flex-col flex-grow">
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white clamp-2">${story.title}</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 clamp-2 my-2 h-10 flex-grow">${story.description || ' '}</p>
-                <div class="rating-container flex items-center gap-2 mt-2 mb-4 text-sm">
-                    <div class="rating-stars flex items-center space-x-1" data-story-id="${story.id}">${starsHtml}</div>
-                    <span class="font-bold text-gray-800 dark:text-white">${avgRating.toFixed(1)}</span>
-                    <span class="text-gray-500 dark:text-gray-400 rating-count">(${totalRatings} ulasan)</span>
+                <div class="flex items-center justify-between mt-2 mb-4 text-sm">
+                    <div class="rating-container flex items-center gap-2">
+                        <div class="rating-stars flex items-center space-x-1" data-story-id="${story.id}">${starsHtml}</div>
+                        <span class="font-bold text-gray-800 dark:text-white">${avgRating.toFixed(1)}</span>
+                    </div>
+                    <button class="like-btn flex items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-red-500 transition-colors" data-story-id="${story.id}">
+                        <i class="fa-heart text-lg ${userLikes.has(story.id) ? 'fas text-red-500' : 'far'}"></i>
+                        <span class="like-count font-bold text-sm">${allLikes.filter(l => l.story_id === story.id).length}</span>
+                    </button>
                 </div>
                 <button class="read-story-btn mt-auto w-full text-white py-2 rounded-lg font-semibold btn-gradient" data-story='${escapeHtml(JSON.stringify(story))}'>
                     Baca
@@ -964,10 +1035,46 @@
             const idx = allRatings.findIndex(r => r.story_id == storyId && r.visitor_uuid == visitorUUID); 
             if (idx > -1) allRatings[idx].rating = ratingValue; 
             else allRatings.push({ story_id: parseInt(storyId), visitor_uuid: visitorUUID, rating: ratingValue }); 
-            redrawStoryCard(storyId); 
+            redrawCardLikes(storyId); 
         } catch (error) { 
             showToast(`Gagal menyimpan rating: ${error.message}`, 'error'); 
         } 
+    }
+    
+    function redrawCardLikes(storyId) {
+        document.querySelectorAll(`.story-card[data-story-id='${storyId}']`).forEach(card => {
+            const isLiked = userLikes.has(storyId);
+            const likeIcon = card.querySelector('.like-btn .fa-heart');
+            const likeCount = card.querySelector('.like-btn .like-count');
+            
+            if(likeIcon) likeIcon.className = `fa-heart text-lg ${isLiked ? 'fas text-red-500' : 'far'}`;
+            if(likeCount) likeCount.textContent = allLikes.filter(l => l.story_id === storyId).length;
+        });
+    }
+
+    async function loadLikedStories() {
+        showPage('likes');
+        const catalog = document.getElementById('likedStoriesCatalog');
+        catalog.innerHTML = '<div class="text-center py-20 col-span-full"><div class="loading-spinner mx-auto"></div></div>';
+        document.getElementById('noLikedStories').classList.add('hidden');
+
+        const likedStoryIds = Array.from(userLikes);
+
+        if (likedStoryIds.length === 0) {
+            catalog.innerHTML = '';
+            document.getElementById('noLikedStories').classList.remove('hidden');
+            return;
+        }
+
+        try {
+            const { data: stories, error } = await supabase.from('stories').select('*').in('id', likedStoryIds);
+            if (error) throw error;
+            catalog.innerHTML = stories.map(createStoryCard).join('');
+            addCardEventListeners();
+        } catch (error) {
+            showToast(`Gagal memuat karya disukai: ${error.message}`, 'error');
+            catalog.innerHTML = '<p class="text-red-500 col-span-full">Gagal memuat daftar.</p>';
+        }
     }
     
     function redrawStoryCard(storyId) {
@@ -1185,6 +1292,82 @@
         }, duration);
     }
     
+    function updateLikesBadge() {
+        const badge = document.getElementById('likesCountBadge');
+        if (userLikes.size > 0) {
+            badge.textContent = userLikes.size;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+
+    async function handleLikeClick(storyId) {
+        if (!visitorUUID || !visitorName || visitorName === 'Guest') {
+            return showToast('Masukkan nama dulu untuk menyukai karya!', 'warning');
+        }
+        
+        const isLiked = userLikes.has(storyId);
+        const likeBtn = document.querySelector(`.like-btn[data-story-id='${storyId}']`);
+        if(likeBtn) likeBtn.disabled = true;
+
+        try {
+            if (isLiked) {
+                const { error } = await supabase.from('likes').delete().match({ story_id: storyId, visitor_uuid: visitorUUID });
+                if (error) throw error;
+                userLikes.delete(storyId);
+                allLikes = allLikes.filter(l => !(l.story_id === storyId && l.visitor_uuid === visitorUUID));
+            } else {
+                const { error } = await supabase.from('likes').insert({ story_id: storyId, visitor_uuid: visitorUUID });
+                if (error) throw error;
+                userLikes.add(storyId);
+                allLikes.push({ story_id: storyId, visitor_uuid: visitorUUID });
+            }
+            redrawCardLikes(storyId);
+            updateLikesBadge();
+        } catch(error) {
+            showToast(`Gagal: ${error.message}`, 'error');
+        } finally {
+            if(likeBtn) likeBtn.disabled = false;
+        }
+    }
+
+    function redrawCardLikes(storyId) {
+        document.querySelectorAll(`.story-card[data-story-id='${storyId}']`).forEach(card => {
+            const isLiked = userLikes.has(storyId);
+            const likeIcon = card.querySelector('.like-btn .fa-heart');
+            const likeCount = card.querySelector('.like-btn .like-count');
+            
+            if(likeIcon) likeIcon.className = `fa-heart text-lg ${isLiked ? 'fas text-red-500' : 'far'}`;
+            if(likeCount) likeCount.textContent = allLikes.filter(l => l.story_id === storyId).length;
+        });
+    }
+
+    async function loadLikedStories() {
+        showPage('likes');
+        const catalog = document.getElementById('likedStoriesCatalog');
+        catalog.innerHTML = '<div class="text-center py-20 col-span-full"><div class="loading-spinner mx-auto"></div></div>';
+        document.getElementById('noLikedStories').classList.add('hidden');
+
+        const likedStoryIds = Array.from(userLikes);
+
+        if (likedStoryIds.length === 0) {
+            catalog.innerHTML = '';
+            document.getElementById('noLikedStories').classList.remove('hidden');
+            return;
+        }
+
+        try {
+            const { data: stories, error } = await supabase.from('stories').select('*').in('id', likedStoryIds);
+            if (error) throw error;
+            catalog.innerHTML = stories.map(createStoryCard).join('');
+            addCardEventListeners();
+        } catch (error) {
+            showToast(`Gagal memuat karya disukai: ${error.message}`, 'error');
+            catalog.innerHTML = '<p class="text-red-500 col-span-full">Gagal memuat daftar.</p>';
+        }
+    }
+
     window.deleteComment = deleteComment;
     window.openKickModal = openKickModal;
     window.closeKickModal = closeKickModal;
@@ -1192,6 +1375,7 @@
     window.closeKickMessageModal = closeKickMessageModal;
     window.sendKickMessage = sendKickMessage;
     window.unblockVisitor = unblockVisitor;
+    window.grantNameChange = grantNameChange;
     </script>
 </body>
 </html>
