@@ -135,6 +135,35 @@
             left: 0;
             z-index: -1;
         }
+
+        /* CSS untuk Golden Ticket */
+        #goldenTicket.animate-show {
+            animation: fadeInScaleUp 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        #ticketMessage.animate-show {
+            animation: fadeInText 1s 0.5s forwards;
+        }
+        #goldenTicket.animate-fly {
+            animation: flyToNav 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        @keyframes fadeInScaleUp {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes fadeInText {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes flyToNav {
+            0% {
+                transform: scale(1) translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0) translate(-60vw, -45vh);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-200">
@@ -145,8 +174,10 @@
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <a href="#" id="homeBtn" class="flex items-center space-x-3"><i class="fas fa-book-sparkles text-3xl text-violet-600"></i><h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Galeri Karya</h1></a>
             <div class="flex items-center space-x-5">
-                <button id="promptNameAgainBtn" class="hidden bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-300 px-4 py-2 rounded-full text-sm font-medium hover:bg-violet-200">
-                    <i class="fas fa-pencil mr-2"></i>Tulis Namamu
+                <button id="promptNameAgainBtn" class="hidden bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-300 px-4 py-2 rounded-full text-sm font-medium hover:bg-violet-200 flex items-center relative">
+                    <i id="nameChangeIcon" class="fas fa-pencil mr-2 transition-all duration-300"></i>
+                    <span id="nameChangeText">Tulis Namamu</span>
+                    <span id="nameChangeDot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full border-2 border-white dark:border-gray-800"></span>
                 </button>
                 <button id="darkModeToggle" title="Ubah Tema" class="text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400"><i id="moonIcon" class="fas fa-moon text-xl"></i><i id="sunIcon" class="fas fa-sun text-xl hidden"></i></button>
                 <button id="likesBtn" title="Karya Disukai" class="text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 relative">
@@ -263,6 +294,22 @@
         </div>
     </div>
 
+    <div id="nameChangeConfirmModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-sm text-center">
+            <i class="fas fa-gift text-5xl text-yellow-400 mb-4"></i>
+            <h2 class="text-2xl font-bold mb-2">Konfirmasi Ganti Nama</h2>
+            <p class="mb-6 text-gray-600 dark:text-gray-300">
+                Kamu akan menggunakan 1x kesempatan spesial untuk mengganti nama. 
+                <strong class="text-red-500">Tiket ini akan hangus setelah digunakan.</strong> 
+                Yakin ingin melanjutkan?
+            </p>
+            <div class="flex justify-center space-x-4">
+                <button id="cancelNameChangeBtn" class="bg-gray-300 dark:bg-gray-600 px-6 py-2 rounded-lg font-semibold">Batal</button>
+                <button id="confirmNameChangeBtn" class="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700">Iya, Gunakan</button>
+            </div>
+        </div>
+    </div>
+
     <div id="quickViewModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[60] p-4 fade-in">
         <button id="closeQuickViewBtn" class="absolute top-6 right-6 text-white text-opacity-70 hover:text-opacity-100 text-4xl z-[65] transition-transform duration-300 hover:rotate-90">
             &times;
@@ -289,6 +336,25 @@
                     <h4 class="text-xl font-bold border-t dark:border-gray-700 pt-4 mb-4">Komentar</h4>
                     <div id="quickViewCommentList" class="space-y-4"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="nameChangeExpiryModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[70] p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 max-w-sm w-full">
+            <h3 class="text-2xl font-bold mb-2">Atur Kedaluwarsa Tiket</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Pilih berapa lama tiket ganti nama ini akan berlaku untuk pengunjung.</p>
+            
+            <input type="hidden" id="grantNameChangeVisitorUUID">
+            
+            <div class="space-y-3">
+                <button data-duration="1" class="expiry-option-btn w-full bg-gray-200 dark:bg-gray-700 p-3 rounded-lg hover:bg-sky-500 hover:text-white">1 Hari</button>
+                <button data-duration="3" class="expiry-option-btn w-full bg-gray-200 dark:bg-gray-700 p-3 rounded-lg hover:bg-sky-500 hover:text-white">3 Hari</button>
+                <button data-duration="7" class="expiry-option-btn w-full bg-gray-200 dark:bg-gray-700 p-3 rounded-lg hover:bg-sky-500 hover:text-white">1 Minggu</button>
+            </div>
+            
+            <div class="flex justify-end space-x-4 mt-8">
+                <button type="button" onclick="closeNameChangeExpiryModal()" class="bg-gray-300 dark:bg-gray-600 px-6 py-2 rounded-lg font-semibold">Batal</button>
             </div>
         </div>
     </div>
@@ -335,6 +401,28 @@
         <div class="glitch-text" data-text="SYSTEM FAILURE">SYSTEM FAILURE</div>
         <div id="adminKickMessage" class="absolute bottom-1/4 left-0 right-0 text-center text-2xl text-white px-8"></div>
         <div class="scan-line"></div>
+    </div>
+
+    <div id="goldenTicketOverlay" class="hidden fixed inset-0 bg-black/80 z-[200] flex flex-col items-center justify-center p-8 text-center">
+        <div id="goldenTicket" class="opacity-0">
+            <div class="ticket-visual w-64 h-40 bg-gradient-to-br from-yellow-300 to-amber-500 rounded-xl shadow-2xl p-4 flex flex-col justify-between relative">
+                <div class="ticket-header flex justify-between items-center border-b border-yellow-600/50 pb-2">
+                    <i class="fas fa-star text-yellow-600"></i>
+                    <span class="font-bold text-yellow-800 text-sm">KESEMPATAN SPESIAL</span>
+                    <i class="fas fa-star text-yellow-600"></i>
+                </div>
+                <div class="ticket-body text-yellow-900">
+                    <p class="font-semibold">Golden Ticket</p>
+                    <p class="text-xs">untuk Mengganti Nama</p>
+                </div>
+                <div class="ticket-footer text-xs text-yellow-700/80">
+                    Dipersembahkan oleh Admin
+                </div>
+                <div class="absolute -left-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/80 rounded-full"></div>
+                <div class="absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/80 rounded-full"></div>
+            </div>
+        </div>
+        <p id="ticketMessage" class="mt-8 text-white text-lg max-w-md opacity-0"></p>
     </div>
 
     <script>
@@ -453,23 +541,43 @@
             document.getElementById('nameInputSection').classList.remove('hidden');
         });
         document.getElementById('promptNameAgainBtn').addEventListener('click', () => {
-            const hasGrantedChance = localStorage.getItem('nameChangeGranted') === 'true';
-            if (hasGrantedChance) {
+            const ticketExpiry = localStorage.getItem('nameChangeExpiresAt');
+            if (ticketExpiry && new Date(ticketExpiry) > new Date()) {
+                document.getElementById('nameChangeConfirmModal').classList.remove('hidden');
+            } else {
+                if(ticketExpiry) {
+                    showToast('Kesempatan ganti namamu sudah hangus.', 'error');
+                    localStorage.removeItem('nameChangeExpiresAt');
+                    updateNameChangeButton(null);
+                    return;
+                }
+                const lastChange = localStorage.getItem('nameChangeTimestamp');
+                const cooldown = 10 * 60 * 60 * 1000;
+                if (lastChange && (new Date().getTime() - lastChange < cooldown)) {
+                    const remainingTime = cooldown - (new Date().getTime() - lastChange);
+                    const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+                    const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                    showToast(`Kamu baru bisa ganti nama lagi dalam ${hours} jam ${minutes} menit.`, 'warning');
+                    return;
+                }
                 namePromptModal.classList.remove('hidden');
-                return;
             }
+        });
 
-            const lastChange = localStorage.getItem('nameChangeTimestamp');
-            const cooldown = 10 * 60 * 60 * 1000; // 10 jam dalam milidetik
-
-            if (lastChange && (new Date().getTime() - lastChange < cooldown)) {
-                const remainingTime = cooldown - (new Date().getTime() - lastChange);
-                const hours = Math.floor(remainingTime / (1000 * 60 * 60));
-                const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
-                showToast(`Kamu baru bisa ganti nama lagi dalam ${hours} jam ${minutes} menit.`, 'warning');
-                return;
-            }
+        document.getElementById('confirmNameChangeBtn').addEventListener('click', () => {
+            document.getElementById('nameChangeConfirmModal').classList.add('hidden');
             namePromptModal.classList.remove('hidden');
+        });
+
+        document.getElementById('cancelNameChangeBtn').addEventListener('click', () => {
+            document.getElementById('nameChangeConfirmModal').classList.add('hidden');
+        });
+
+        document.querySelectorAll('.expiry-option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const duration = parseInt(btn.dataset.duration);
+                grantNameChangeWithExpiry(duration);
+            });
         });
 
         document.querySelectorAll('.kick-duration-btn').forEach(btn => {
@@ -539,6 +647,59 @@
         }).subscribe();
     }
 
+    function listenForAdminCommands() {
+        if (!visitorUUID) return;
+        const channel = supabase.channel('control-' + visitorUUID);
+        channel.on('broadcast', { event: 'name_change_granted' }, ({ payload }) => {
+            localStorage.setItem('nameChangeExpiresAt', payload.expires_at);
+            showGoldenTicket(payload.message);
+        }).subscribe();
+    }
+
+    function updateNameChangeButton(expiresAtTimestamp) {
+        const btn = document.getElementById('promptNameAgainBtn');
+        const icon = document.getElementById('nameChangeIcon');
+        const text = document.getElementById('nameChangeText');
+        const dot = document.getElementById('nameChangeDot');
+        if (!btn || !icon || !text || !dot) return;
+
+        if (expiresAtTimestamp && new Date(expiresAtTimestamp) > new Date()) {
+            icon.className = "fas fa-gift mr-2 text-yellow-500";
+            text.textContent = "Ganti Nama";
+            dot.classList.remove('hidden');
+        } else {
+            icon.className = "fas fa-pencil mr-2";
+            text.textContent = "Tulis Namamu";
+            dot.classList.add('hidden');
+        }
+    }
+
+    function showGoldenTicket(message) {
+        const overlay = document.getElementById('goldenTicketOverlay');
+        const ticket = document.getElementById('goldenTicket');
+        const msgElement = document.getElementById('ticketMessage');
+
+        overlay.classList.remove('hidden');
+        ticket.classList.remove('animate-fly', 'animate-show');
+        msgElement.classList.remove('animate-show');
+        msgElement.textContent = message;
+
+        setTimeout(() => {
+            ticket.classList.add('animate-show');
+            msgElement.classList.add('animate-show');
+        }, 100);
+
+        setTimeout(() => {
+            ticket.classList.add('animate-fly');
+            localStorage.setItem('nameChangeGranted', 'true');
+            updateNameChangeButton(true);
+        }, 3500);
+
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+        }, 4700);
+    }
+
     function showGlitchScreen(message) {
         if (heartbeatInterval) clearInterval(heartbeatInterval);
         document.getElementById('adminKickMessage').textContent = message;
@@ -605,6 +766,9 @@
             displayCoolWelcome();
             startHeartbeat();
             listenForKickCommands();
+            listenForAdminCommands();
+            const ticketExpiry = localStorage.getItem('nameChangeExpiresAt');
+            updateNameChangeButton(ticketExpiry);
         } else {
             namePromptModal.classList.remove('hidden');
         }
@@ -621,15 +785,17 @@
             await updateVisitorStatus({ 
                 visitor_name: visitorName, 
                 skip_reason: null, 
-                name_change_granted: false 
+                name_change_expires_at: null 
             });
-            localStorage.removeItem('nameChangeGranted');
+            localStorage.removeItem('nameChangeExpiresAt');
+            updateNameChangeButton(null);
 
             displayCoolWelcome();
             namePromptModal.classList.add('hidden');
             loadStoryCatalog();
             startHeartbeat();
             listenForKickCommands();
+            listenForAdminCommands();
         }
     }
 
@@ -644,6 +810,7 @@
         loadStoryCatalog();
         startHeartbeat();
         listenForKickCommands();
+        listenForAdminCommands();
     }
     
     function applyTheme(theme) { const isDark = theme === 'dark'; document.documentElement.classList.toggle('dark', isDark); moonIcon.classList.toggle('hidden', isDark); sunIcon.classList.toggle('hidden', !isDark); }
@@ -685,6 +852,8 @@
                 const lastSeen = new Date(visitor.last_seen);
                 const isOnline = lastSeen > threeMinutesAgo;
                 const isBlocked = visitor.blocked_until && new Date(visitor.blocked_until) > new Date();
+                const ticketExpiresAt = visitor.name_change_expires_at ? new Date(visitor.name_change_expires_at) : null;
+                const hasValidTicket = ticketExpiresAt && ticketExpiresAt > new Date();
 
                 let statusIndicator, statusText;
                 if (isBlocked) {
@@ -712,7 +881,7 @@
                             </div>
                         </div>
                         <div class="flex items-center space-x-2 flex-shrink-0 ml-2">
-                            <button onclick="grantNameChange('${visitor.visitor_uuid}')" title="Beri 1x kesempatan ganti nama" class="bg-sky-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-sky-600 ${visitor.name_change_granted ? 'opacity-50 cursor-not-allowed' : ''}" ${visitor.name_change_granted ? 'disabled' : ''}>
+                            <button onclick="openNameChangeExpiryModal('${visitor.visitor_uuid}')" title="Beri kesempatan ganti nama" class="bg-sky-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-sky-600 ${hasValidTicket ? 'opacity-50 cursor-not-allowed' : ''}" ${hasValidTicket ? 'disabled' : ''}>
                                 <i class="fas fa-gift"></i>
                             </button>
                             <button onclick="openKickModal('${visitor.visitor_uuid}')" title="${isBlocked ? 'Ubah Durasi Blokir' : 'Blokir Pengunjung'}" class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-yellow-600">
@@ -730,20 +899,45 @@
         }
     }
 
-    async function grantNameChange(uuid) {
-        if (!confirm('Yakin ingin memberi pengunjung ini 1x kesempatan untuk ganti nama?')) return;
+    async function grantNameChangeWithExpiry(durationInDays) {
+        const uuid = document.getElementById('grantNameChangeVisitorUUID').value;
+        if (!uuid) return;
+
         try {
+            const now = new Date();
+            const expiryDate = new Date(now.setDate(now.getDate() + durationInDays));
+            
             const { error } = await supabase
                 .from('visitors')
-                .update({ name_change_granted: true })
+                .update({ name_change_expires_at: expiryDate.toISOString() })
                 .eq('visitor_uuid', uuid);
-            
             if (error) throw error;
+            
+            const channel = supabase.channel('control-' + uuid);
+            await channel.send({
+                type: 'broadcast',
+                event: 'name_change_granted',
+                payload: { 
+                    message: `Admin memberimu tiket ganti nama yang berlaku selama ${durationInDays} hari!`,
+                    expires_at: expiryDate.toISOString() 
+                },
+            });
+            
             showToast('Kesempatan ganti nama diberikan!', 'success');
+            closeNameChangeExpiryModal();
             loadAllVisitors();
         } catch (error) {
             showToast(`Gagal memberi izin: ${error.message}`, 'error');
         }
+    }
+
+    function openNameChangeExpiryModal(uuid) {
+        document.getElementById('grantNameChangeVisitorUUID').value = uuid;
+        document.getElementById('nameChangeExpiryModal').classList.remove('hidden');
+    }
+
+    function closeNameChangeExpiryModal() {
+        document.getElementById('nameChangeExpiryModal').classList.add('hidden');
     }
 
     async function unblockVisitor(uuid) {
@@ -1367,7 +1561,7 @@
             catalog.innerHTML = '<p class="text-red-500 col-span-full">Gagal memuat daftar.</p>';
         }
     }
-
+    
     window.deleteComment = deleteComment;
     window.openKickModal = openKickModal;
     window.closeKickModal = closeKickModal;
@@ -1376,6 +1570,9 @@
     window.sendKickMessage = sendKickMessage;
     window.unblockVisitor = unblockVisitor;
     window.grantNameChange = grantNameChange;
+    window.openNameChangeExpiryModal = openNameChangeExpiryModal;
+    window.closeNameChangeExpiryModal = closeNameChangeExpiryModal;
+    window.grantNameChangeWithExpiry = grantNameChangeWithExpiry;
     </script>
 </body>
 </html>
