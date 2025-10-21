@@ -844,6 +844,8 @@
         }
     }
     
+    let visitorsChannel = null;
+
     async function loadAllVisitors() {
         const listContainer = document.getElementById('allVisitorsList');
         listContainer.innerHTML = '<div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div>';
@@ -861,56 +863,73 @@
                 return;
             }
 
-            const threeMinutesAgo = new Date(Date.now() - 3 * 60 * 1000);
-            listContainer.innerHTML = visitors.map(visitor => {
-                const lastSeen = new Date(visitor.last_seen);
-                const isOnline = lastSeen > threeMinutesAgo;
-                const isBlocked = visitor.blocked_until && new Date(visitor.blocked_until) > new Date();
-                const ticketExpiresAt = visitor.name_change_expires_at ? new Date(visitor.name_change_expires_at) : null;
-                const hasValidTicket = ticketExpiresAt && ticketExpiresAt > new Date();
+            renderVisitorsList(visitors);
 
-                let statusIndicator, statusText;
-                if (isBlocked) {
-                    statusIndicator = 'bg-red-500';
-                    statusText = 'Diblokir';
-                } else if (isOnline) {
-                    statusIndicator = 'bg-green-500 animate-pulse';
-                    statusText = 'Online';
-                } else {
-                    statusIndicator = 'bg-gray-400';
-                    statusText = 'Offline';
-                }
-                
-                return `
-                <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border dark:border-gray-700">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3 overflow-hidden">
-                            <div class="flex-shrink-0 flex flex-col items-center w-12">
-                                <span class="w-3 h-3 rounded-full ${statusIndicator}"></span>
-                                <span class="text-xs mt-1 dark:text-gray-400">${statusText}</span>
-                            </div>
-                            <div class="overflow-hidden">
-                                <p class="font-semibold clamp-1">${escapeHtml(visitor.visitor_name)}</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Terakhir dilihat: ${lastSeen.toLocaleString('id-ID')}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-2 flex-shrink-0 ml-2">
-                            <button onclick="openNameChangeExpiryModal('${visitor.visitor_uuid}')" title="Beri kesempatan ganti nama" class="bg-sky-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-sky-600 ${hasValidTicket ? 'opacity-50 cursor-not-allowed' : ''}" ${hasValidTicket ? 'disabled' : ''}>
-                                <i class="fas fa-gift"></i>
-                            </button>
-                            <button onclick="openKickModal('${visitor.visitor_uuid}')" title="${isBlocked ? 'Ubah Durasi Blokir' : 'Blokir Pengunjung'}" class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-yellow-600">
-                                <i class="fas fa-user-clock"></i>
-                            </button>
-                            ${isBlocked ? `<button onclick="unblockVisitor('${visitor.visitor_uuid}')" title="Buka Blokir" class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-green-600"><i class="fas fa-unlock"></i></button>` : ''}
-                        </div>
-                    </div>
-                </div>
-                `;
-            }).join('');
+            // Subscribe to real-time updates for visitors table
+            if (visitorsChannel) {
+                supabase.removeChannel(visitorsChannel);
+            }
+            visitorsChannel = supabase
+                .channel('visitors-updates')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'visitors' }, (payload) => {
+                    console.log('Pengunjung diperbarui:', payload);
+                    loadAllVisitors(); // Reload the list on any change
+                })
+                .subscribe();
 
         } catch (error) {
             listContainer.innerHTML = `<p class="text-red-500">Gagal memuat daftar pengunjung: ${error.message}</p>`;
         }
+    }
+
+    function renderVisitorsList(visitors) {
+        const listContainer = document.getElementById('allVisitorsList');
+        const threeMinutesAgo = new Date(Date.now() - 3 * 60 * 1000);
+        listContainer.innerHTML = visitors.map(visitor => {
+            const lastSeen = new Date(visitor.last_seen);
+            const isOnline = lastSeen > threeMinutesAgo;
+            const isBlocked = visitor.blocked_until && new Date(visitor.blocked_until) > new Date();
+            const ticketExpiresAt = visitor.name_change_expires_at ? new Date(visitor.name_change_expires_at) : null;
+            const hasValidTicket = ticketExpiresAt && ticketExpiresAt > new Date();
+
+            let statusIndicator, statusText;
+            if (isBlocked) {
+                statusIndicator = 'bg-red-500';
+                statusText = 'Diblokir';
+            } else if (isOnline) {
+                statusIndicator = 'bg-green-500 animate-pulse';
+                statusText = 'Online';
+            } else {
+                statusIndicator = 'bg-gray-400';
+                statusText = 'Offline';
+            }
+
+            return `
+            <div class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3 overflow-hidden">
+                        <div class="flex-shrink-0 flex flex-col items-center w-12">
+                            <span class="w-3 h-3 rounded-full ${statusIndicator}"></span>
+                            <span class="text-xs mt-1 dark:text-gray-400">${statusText}</span>
+                        </div>
+                        <div class="overflow-hidden">
+                            <p class="font-semibold clamp-1">${escapeHtml(visitor.visitor_name)}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Terakhir dilihat: ${lastSeen.toLocaleString('id-ID')}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2 flex-shrink-0 ml-2">
+                        <button onclick="openNameChangeExpiryModal('${visitor.visitor_uuid}')" title="Beri kesempatan ganti nama" class="bg-sky-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-sky-600 ${hasValidTicket ? 'opacity-50 cursor-not-allowed' : ''}" ${hasValidTicket ? 'disabled' : ''}>
+                            <i class="fas fa-gift"></i>
+                        </button>
+                        <button onclick="openKickModal('${visitor.visitor_uuid}')" title="${isBlocked ? 'Ubah Durasi Blokir' : 'Blokir Pengunjung'}" class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-yellow-600">
+                            <i class="fas fa-user-clock"></i>
+                        </button>
+                        ${isBlocked ? `<button onclick="unblockVisitor('${visitor.visitor_uuid}')" title="Buka Blokir" class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-green-600"><i class="fas fa-unlock"></i></button>` : ''}
+                    </div>
+                </div>
+            </div>
+            `;
+        }).join('');
     }
 
     async function grantNameChangeWithExpiry(durationInDays) {
