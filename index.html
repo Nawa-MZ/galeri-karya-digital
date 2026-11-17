@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galeri Karya Digital</title>
-    
-    <script src="https://cdn.jsdelivr.net/npm/pocketbase@0.21.3/dist/pocketbase.umd.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/tsparticles-slim@2.12.0/tsparticles.slim.bundle.min.js"></script>
     
@@ -223,7 +221,8 @@
                         <select id="sortOptions" class="w-full px-5 py-3 border rounded-full focus:ring-2 focus:ring-violet-500 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 appearance-none">
                             <option value="newest">Urutkan: Terbaru</option>
                             <option value="popular">Urutkan: Terpopuler</option>
-                            </select>
+                            <option value="rating">Urutkan: Rating Tertinggi</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -241,7 +240,7 @@
             <div id="emptyState" class="hidden text-center py-20 bg-gray-100 dark:bg-gray-800 rounded-lg"><i class="fas fa-book-blank text-6xl text-violet-300 mb-4"></i><h3 class="text-2xl font-bold">Galeri Masih Sepi</h3><p>Jadilah yang pertama mempublikasikan karya!</p></div>
         </div>
         <div id="loginPage" class="hidden fade-in max-w-md mx-auto"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8"><div class="text-center mb-8"><i class="fas fa-key text-4xl text-violet-500 mb-4"></i><h2 class="text-3xl font-bold dark:text-white">Masuk Ruang Penulis</h2><p class="dark:text-gray-300">Login untuk mengelola karyamu.</p></div><form id="loginForm" class="space-y-6"><div><label for="loginEmail" class="block text-sm font-medium dark:text-gray-300 mb-1">Email</label><input type="email" name="email" id="loginEmail" required class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><div><label for="loginPassword" class="block text-sm font-medium dark:text-gray-300 mb-1">Password</label><input type="password" name="password" id="loginPassword" required class="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><button type="submit" id="loginSubmitBtn" class="w-full bg-violet-600 text-white py-3 rounded-lg hover:bg-violet-700 font-semibold flex items-center justify-center"><span id="loginBtnText">Masuk</span><div id="loginSpinner" class="hidden loading-spinner ml-3"></div></button></form><div class="mt-6 text-center"><button id="backToHomeBtn" class="text-violet-600 dark:text-violet-400 hover:underline">← Kembali</button></div></div></div>
-        <div id="adminPage" class="hidden fade-in"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8"><div class="flex justify-between items-start mb-8"><div><h2 class="text-4xl font-bold dark:text-white">Ruang Kreasi</h2><p class="dark:text-gray-300">Selamat datang, <span id="adminEmail" class="font-semibold text-violet-600 dark:text-violet-400"></span>.</p></div></div><div class="mb-10 p-6 bg-gradient-to-r from-violet-50 to-fuchsia-50 dark:from-violet-900/50 dark:to-fuchsia-900/50 rounded-lg border dark:border-violet-800"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-pen-to-square mr-3"></i>Publikasikan Karya Baru</h3><form id="uploadForm" class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label for="storyTitle" class="block text-sm font-medium">Judul</label><input type="text" name="storyTitle" id="storyTitle" required class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><div><label for="storyCategory" class="block text-sm font-medium">Kategori</label><select name="storyCategory" id="storyCategory" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"><option>Fiksi</option><option>Puisi</option><option>Cerpen</option><option>Non-Fiksi</option><option>Lainnya</option></select></div><div class="md:col-span-2"><label for="storyDescription" class="block text-sm font-medium">Sinopsis</label><textarea name="storyDescription" id="storyDescription" rows="3" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label for="coverFile" class="block text-sm font-medium">Cover</label><input type="file" name="coverFile" id="coverFile" accept="image/*" class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div><label for="storyFile" class="block text-sm font-medium">File (PDF)</label><input type="file" name="storyFile" id="storyFile" accept=".pdf" required class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div class="md:col-span-2"><button type="submit" id="uploadSubmitBtn" class="bg-violet-600 text-white px-6 py-3 rounded-lg hover:bg-violet-700 font-semibold flex items-center justify-center shadow-lg"><i class="fas fa-paper-plane mr-2"></i><span id="uploadBtnText">Publikasikan</span><div id="uploadSpinner" class="hidden loading-spinner ml-3"></div></button></div></form></div><div><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-layer-group mr-3"></i>Karya Terpublikasi</h3><div id="adminStoryList" class="space-y-4"></div></div><div class="mt-10"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-users-cog mr-3 text-sky-400"></i>Manajemen Pengunjung</h3><p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Lihat semua pengunjung yang pernah datang. Beri hukuman atau izin khusus.</p><div id="allVisitorsList" class="space-y-3"><div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div></div></div></div></div>
+        <div id="adminPage" class="hidden fade-in"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8"><div class="flex justify-between items-start mb-8"><div><h2 class="text-4xl font-bold dark:text-white">Ruang Kreasi</h2><p class="dark:text-gray-300">Selamat datang, <span id="adminEmail" class="font-semibold text-violet-600 dark:text-violet-400"></span>.</p></div></div><div class="mb-10 p-6 bg-gradient-to-r from-violet-50 to-fuchsia-50 dark:from-violet-900/50 dark:to-fuchsia-900/50 rounded-lg border dark:border-violet-800"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-pen-to-square mr-3"></i>Publikasikan Karya Baru</h3><form id="uploadForm" class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label for="storyTitle" class="block text-sm font-medium">Judul</label><input type="text" name="storyTitle" id="storyTitle" required class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></div><div><label for="storyCategory" class="block text-sm font-medium">Kategori</label><select name="storyCategory" id="storyCategory" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"><option>Fiksi</option><option>Puisi</option><option>Cerpen</option><option>Non-Fiksi</option><option>Lainnya</option></select></div><div class="md:col-span-2"><label for="storyDescription" class="block text-sm font-medium">Sinopsis</label><textarea name="storyDescription" id="storyDescription" rows="3" class="w-full p-2 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label for="coverFile" class="block text-sm font-medium">Cover</label><input type="file" name="coverFile" id="coverFile" accept="image/*" class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div><label for="storyFile" class="block text-sm font-medium">File (PDF)</label><input type="file" name="storyFile" id="storyFile" accept=".pdf" required class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 hover:file:bg-violet-200"></div><div class="md:col-span-2"><button type="submit" id="uploadSubmitBtn" class="bg-violet-600 text-white px-6 py-3 rounded-lg hover:bg-violet-700 font-semibold flex items-center justify-center shadow-lg"><i class="fas fa-paper-plane mr-2"></i><span id="uploadBtnText">Publikasikan</span><div id="uploadSpinner" class="hidden loading-spinner ml-3"></div></button></div></form></div><div><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-layer-group mr-3"></i>Karya Terpublikasi</h3><div id="adminStoryList" class="space-y-4"></div></div><div class="mt-10"><h3 class="text-2xl font-semibold dark:text-white mb-4"><i class="fas fa-users-cog mr-3 text-sky-400"></i>Manajemen Pengunjung</h3><p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Lihat semua pengunjung yang pernah datang. Beri hukuman atau izin khusus bahkan saat mereka sedang offline.</p><div id="allVisitorsList" class="space-y-3"><div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div></div></div></div></div>
         <div id="profilePage" class="hidden fade-in max-w-4xl mx-auto"><div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"><div class="h-48 bg-gradient-to-r from-violet-500 to-fuchsia-500"></div><div class="relative"><div class="absolute -top-16 left-8"><div class="w-32 h-32 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center shadow-lg border-4 dark:border-gray-800"><i class="fas fa-user-astronaut text-6xl text-violet-500"></i></div></div></div><div class="pt-20 px-8 pb-8"><h2 class="text-3xl font-bold" id="profileName"></h2><p class="dark:text-gray-400" id="profileEmail"></p><p class="mt-4" id="profileBio">Seorang penulis yang passionate dalam menciptakan cerita-cerita menarik dan menginspirasi. Bergabung dengan Galeri Karya Digital untuk berbagi imajinasi.</p><div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 text-center"><div class="bg-violet-50 dark:bg-violet-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-violet-600 dark:text-violet-400" id="statStories">0</p><p>Karya</p></div><div class="bg-blue-50 dark:bg-blue-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-blue-600 dark:text-blue-400" id="statViews">0</p><p>Total Dibaca</p></div><div class="bg-amber-50 dark:bg-amber-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-amber-600 dark:text-amber-400" id="statRating">N/A</p><p>Rating Rata2</p></div><div class="bg-pink-50 dark:bg-pink-900/50 p-4 rounded-lg"><p class="text-2xl font-bold text-pink-600 dark:text-pink-400" id="statHearts">0</p><p>Total Rating</p></div></div></div><div class="px-8 pb-8"><h3 class="text-xl font-bold mb-4">Karya Terbaru Penulis</h3><div id="recentStories" class="space-y-3"></div></div><div class="bg-gray-50 dark:bg-gray-900/50 px-8 py-4 text-center"><button id="backFromProfileBtn" class="text-violet-600 dark:text-violet-400 hover:underline">← Kembali</button></div></div></div>
         <div id="viewerPage" class="hidden fade-in">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8">
@@ -439,28 +438,34 @@
         <p id="ticketMessage" class="mt-8 text-white text-lg max-w-md opacity-0"></p>
     </div>
 
-    <script>
-    // --- POCKETBASE INIT ---
-    const pb = new PocketBase('https://manufacture-verbal-institution-unlike.trycloudflare.com');
-    pb.autoCancellation(false);
-    let currentUser = pb.authStore.model;
-    
-    pb.authStore.onChange((token, model) => {
-        currentUser = model;
-        updateUI();
-    });
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getFirestore, collection, doc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, where, orderBy, increment } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
-    // Helper: Generate URL gambar/file dari PocketBase
-    function getFileUrl(record, fileName) {
-        if (!fileName) return '';
-        return pb.files.getUrl(record, fileName);
-    }
-    
-    // Global Vars
-    let allRatings = [], userRatings = new Map(), currentStoryId = null, visitorName = null, visitorUUID = null, allLikes = [], userLikes = new Set();
+    const firebaseConfig = {
+        apiKey: "AIzaSyCCQDUQH3vbNmrG8ig-pPS4D-1izaIEaJE",
+        authDomain: "galeri-karya-digital.firebaseapp.com",
+        projectId: "galeri-karya-digital",
+        storageBucket: "galeri-karya-digital.firebasestorage.app",
+        messagingSenderId: "514652916773",
+        appId: "1:514652916773:web:45100490f9f629691f83cc",
+        measurementId: "G-K4KRR4LC1Y"
+    };
+    const CLOUDINARY_CLOUD_NAME = 'tqfrswrg';
+    const CLOUDINARY_UPLOAD_PRESET = 'galeri_karya';
+
+    const fbApp = initializeApp(firebaseConfig);
+    const db = getFirestore(fbApp);
+    const auth = getAuth(fbApp);
+
+    let currentUser = null, allRatings = [], userRatings = new Map(), currentStoryId = null, visitorName = null, visitorUUID = null, allLikes = [], userLikes = new Set();
     let currentPage = 1;
     const storiesPerPage = 8;
     let heartbeatInterval = null;
+    let visitorUnsub = null, visitorsAdminUnsub = null, lockTimeout = null, lastCommentsCtx = null;
+    let resolveAuthReady;
+    const authReady = new Promise(r => { resolveAuthReady = r; });
 
     const pages = { home: document.getElementById('homePage'), login: document.getElementById('loginPage'), admin: document.getElementById('adminPage'), viewer: document.getElementById('viewerPage'), profile: document.getElementById('profilePage'), likes: document.getElementById('likesPage') };
     const darkModeToggle = document.getElementById('darkModeToggle');
@@ -468,16 +473,73 @@
     const sunIcon = document.getElementById('sunIcon');
     const namePromptModal = document.getElementById('namePromptModal');
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        tsParticles.load("particles-js", { fpsLimit: 60, interactivity: { events: { onHover: { enable: true, mode: "repulse", }, resize: true, }, modes: { repulse: { distance: 100, duration: 0.4, }, }, }, particles: { color: { value: "#a78bfa", }, links: { color: "#a78bfa", distance: 150, enable: true, opacity: 0.2, width: 1, }, move: { direction: "none", enable: true, outModes: "out", random: false, speed: 1, straight: false, }, number: { density: { enable: true, area: 800, }, value: 60, }, opacity: { value: 0.3, }, shape: { type: "circle", }, size: { value: { min: 1, max: 5 }, }, }, detectRetina: true, });
+    async function initApp() {
+        tsParticles.load("particles-js", {
+            fpsLimit: 60,
+            interactivity: {
+                events: {
+                    onHover: {
+                        enable: true,
+                        mode: "repulse",
+                    },
+                    resize: true,
+                },
+                modes: {
+                    repulse: {
+                        distance: 100,
+                        duration: 0.4,
+                    },
+                },
+            },
+            particles: {
+                color: {
+                    value: "#a78bfa",
+                },
+                links: {
+                    color: "#a78bfa",
+                    distance: 150,
+                    enable: true,
+                    opacity: 0.2,
+                    width: 1,
+                },
+                move: {
+                    direction: "none",
+                    enable: true,
+                    outModes: "out",
+                    random: false,
+                    speed: 1,
+                    straight: false,
+                },
+                number: {
+                    density: {
+                        enable: true,
+                        area: 800,
+                    },
+                    value: 60,
+                },
+                opacity: {
+                    value: 0.3,
+                },
+                shape: {
+                    type: "circle",
+                },
+                size: {
+                    value: { min: 1, max: 5 },
+                },
+            },
+            detectRetina: true,
+        });
 
         setupEventListeners();
         applyInitialTheme();
         initializeVisitor();
+        await authReady;
         updateUI();
         showPage('home');
         await loadStoryCatalog();
-    });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initApp);
+    else initApp();
 
     function setupEventListeners() {
         document.getElementById('homeBtn').addEventListener('click', (e) => { e.preventDefault(); currentPage = 1; loadStoryCatalog(); showPage('home'); });
@@ -492,7 +554,10 @@
         document.getElementById('backFromProfileBtn').addEventListener('click', () => showPage('home'));
         document.getElementById('closeViewerBtn').addEventListener('click', () => showPage('home'));
         document.getElementById('searchInput').addEventListener('input', () => { currentPage = 1; loadStoryCatalog(); });
-        document.getElementById('sortOptions').addEventListener('change', () => { currentPage = 1; loadStoryCatalog(); });
+        document.getElementById('sortOptions').addEventListener('change', () => {
+            currentPage = 1;
+            loadStoryCatalog();
+        });
         document.getElementById('editStoryForm').addEventListener('submit', handleUpdateStory);
         document.getElementById('cancelEditBtn').addEventListener('click', () => document.getElementById('editModal').classList.add('hidden'));
         document.getElementById('commentForm').addEventListener('submit', handlePostComment);
@@ -553,6 +618,12 @@
                 confirmKick(duration);
             });
         });
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user || null;
+            updateUI();
+            resolveAuthReady();
+        });
         
         document.querySelectorAll('.category-btn').forEach(btn => btn.addEventListener('click', () => {
             document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
@@ -560,6 +631,16 @@
             currentPage = 1;
             loadStoryCatalog();
         }));
+    }
+
+    function getRatingStats(storyId) {
+        const rs = allRatings.filter(r => r.story_id === storyId);
+        return { avg: rs.length ? rs.reduce((sum, r) => sum + r.rating, 0) / rs.length : 0, total: rs.length };
+    }
+
+    async function fetchAllStories() {
+        const snap = await getDocs(collection(db, 'stories'));
+        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
     }
     
     async function openQuickView(story) {
@@ -572,9 +653,7 @@
         document.getElementById('quickViewViews').querySelector('span').textContent = story.view_count || 0;
 
         const ratingContainer = document.getElementById('quickViewRating');
-        const storyRatings = allRatings.filter(r => r.story_id === story.id);
-        const avgRating = story.avg_rating !== undefined ? story.avg_rating : (storyRatings.length ? storyRatings.reduce((sum, r) => sum + r.rating, 0) / storyRatings.length : 0);
-        const totalRatings = story.total_ratings !== undefined ? story.total_ratings : storyRatings.length;
+        const { avg: avgRating, total: totalRatings } = getRatingStats(story.id);
         ratingContainer.innerHTML = `<i class="fas fa-star text-yellow-400"></i> <strong>${avgRating.toFixed(1)}</strong> <span class="text-gray-500">(${totalRatings} ulasan)</span>`;
 
         await loadComments(story.id, 'quickViewCommentList');
@@ -594,20 +673,59 @@
         modal.classList.remove('hidden');
     }
 
-    function listenForKickCommands() {
+    // Satu listener real-time untuk dokumen visitors/{visitorUUID}:
+    // menangani perintah tendang, blokir/buka blokir, dan tiket ganti nama.
+    function listenToVisitorDocument() {
         if (!visitorUUID) return;
-        // Di PocketBase, kita subscribe ke tabel visitors untuk deteksi blokir
-        pb.collection('visitors').subscribe(visitorUUID, function(e) {
-             if (e.action === 'update') {
-                 if (e.record.blocked_until && new Date(e.record.blocked_until) > new Date()) {
-                     lockScreen(e.record.blocked_until);
-                 }
-                 if (e.record.name_change_granted) {
-                     localStorage.setItem('nameChangeExpiresAt', e.record.name_change_expires_at);
-                     showGoldenTicket("Admin memberimu kesempatan ganti nama!");
-                 }
-             }
-        }).catch(err => console.log("Subscribe error", err));
+        if (visitorUnsub) { visitorUnsub(); visitorUnsub = null; }
+        visitorUnsub = onSnapshot(doc(db, 'visitors', visitorUUID), (snap) => {
+            if (!snap.exists()) return;
+            const d = snap.data();
+
+            // 1. Perintah tendang
+            if (d.kick_command && d.kick_command.id) {
+                const kickId = String(d.kick_command.id);
+                if (localStorage.getItem('lastKickCommandId') !== kickId) {
+                    localStorage.setItem('lastKickCommandId', kickId);
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate([200, 100, 200]);
+                    }
+                    const kickMessage = d.kick_command.message;
+                    setTimeout(() => {
+                        showGlitchScreen(kickMessage);
+                    }, 500);
+                }
+            }
+
+            // 2. Blokir / buka blokir
+            if (d.blocked_until && new Date(d.blocked_until) > new Date()) {
+                lockScreen(d.blocked_until);
+            } else {
+                unlockScreen();
+                if (!d.kick_command) {
+                    document.getElementById('glitchScreen').classList.add('hidden');
+                    if (!heartbeatInterval && visitorName) startHeartbeat();
+                }
+            }
+
+            // 3. Tiket ganti nama
+            const exp = d.name_change_expires_at;
+            if (exp && new Date(exp) > new Date()) {
+                localStorage.setItem('nameChangeExpiresAt', exp);
+                if (localStorage.getItem('goldenTicketShownFor') !== exp) {
+                    localStorage.setItem('goldenTicketShownFor', exp);
+                    const expText = new Date(exp).toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
+                    showGoldenTicket(`Admin memberimu tiket ganti nama yang berlaku sampai ${expText}!`, exp);
+                } else {
+                    updateNameChangeButton(exp);
+                }
+            } else if (!exp) {
+                localStorage.removeItem('nameChangeExpiresAt');
+                updateNameChangeButton(null);
+            }
+        }, (error) => {
+            console.error('Listener pengunjung gagal:', error.message);
+        });
     }
 
     function updateNameChangeButton(expiresAtTimestamp) {
@@ -618,6 +736,7 @@
         if (!btn || !icon || !text || !dot) return;
 
         if (expiresAtTimestamp && new Date(expiresAtTimestamp) > new Date()) {
+            btn.classList.remove('hidden');
             icon.className = "fas fa-gift mr-2 text-yellow-500";
             text.textContent = "Ganti Nama";
             dot.classList.remove('hidden');
@@ -625,10 +744,11 @@
             icon.className = "fas fa-pencil mr-2";
             text.textContent = "Tulis Namamu";
             dot.classList.add('hidden');
+            if (visitorName && visitorName !== 'Guest') btn.classList.add('hidden');
         }
     }
 
-    function showGoldenTicket(message) {
+    function showGoldenTicket(message, expiresAt) {
         const overlay = document.getElementById('goldenTicketOverlay');
         const ticket = document.getElementById('goldenTicket');
         const msgElement = document.getElementById('ticketMessage');
@@ -646,7 +766,7 @@
         setTimeout(() => {
             ticket.classList.add('animate-fly');
             localStorage.setItem('nameChangeGranted', 'true');
-            updateNameChangeButton(true);
+            updateNameChangeButton(expiresAt);
         }, 3500);
 
         setTimeout(() => {
@@ -655,8 +775,8 @@
     }
 
     function showGlitchScreen(message) {
-        if (heartbeatInterval) clearInterval(heartbeatInterval);
-        document.getElementById('adminKickMessage').textContent = message;
+        if (heartbeatInterval) { clearInterval(heartbeatInterval); heartbeatInterval = null; }
+        document.getElementById('adminKickMessage').textContent = message || "Akses Anda telah diputus oleh admin.";
         document.getElementById('glitchScreen').classList.remove('hidden');
     }
 
@@ -719,7 +839,7 @@
         if (visitorName) {
             displayCoolWelcome();
             startHeartbeat();
-            listenForKickCommands();
+            listenToVisitorDocument();
             const ticketExpiry = localStorage.getItem('nameChangeExpiresAt');
             updateNameChangeButton(ticketExpiry);
         } else {
@@ -747,7 +867,7 @@
             namePromptModal.classList.add('hidden');
             loadStoryCatalog();
             startHeartbeat();
-            listenForKickCommands();
+            listenToVisitorDocument();
         }
     }
 
@@ -761,7 +881,7 @@
         namePromptModal.classList.add('hidden');
         loadStoryCatalog();
         startHeartbeat();
-        listenForKickCommands();
+        listenToVisitorDocument();
     }
     
     function applyTheme(theme) { const isDark = theme === 'dark'; document.documentElement.classList.toggle('dark', isDark); moonIcon.classList.toggle('hidden', isDark); sunIcon.classList.toggle('hidden', !isDark); }
@@ -780,37 +900,30 @@
             showPage('login');
         }
     }
-    
-    async function loadAllVisitors() {
+
+    // Daftar pengunjung real-time (onSnapshot, diurutkan last_seen desc)
+    function loadAllVisitors() {
         const listContainer = document.getElementById('allVisitorsList');
         listContainer.innerHTML = '<div class="text-center py-4"><div class="loading-spinner mx-auto"></div></div>';
+        if (visitorsAdminUnsub) { visitorsAdminUnsub(); visitorsAdminUnsub = null; }
 
-        try {
-            const records = await pb.collection('visitors').getFullList({
-                sort: '-last_seen',
-            });
-
-            if (records.length === 0) {
+        visitorsAdminUnsub = onSnapshot(query(collection(db, 'visitors'), orderBy('last_seen', 'desc')), (snap) => {
+            const visitors = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            if (visitors.length === 0) {
                 listContainer.innerHTML = '<p class="text-center text-gray-500 py-4">Belum ada pengunjung sama sekali.</p>';
                 return;
             }
-
-            renderVisitorsList(records);
-            
-            // Subscribe to real-time updates for visitors list (admin view)
-            pb.collection('visitors').subscribe('*', function(e) {
-               loadAllVisitors();
-            });
-
-        } catch (error) {
+            renderVisitorsList(visitors);
+        }, (error) => {
             listContainer.innerHTML = `<p class="text-red-500">Gagal memuat daftar pengunjung: ${error.message}</p>`;
-        }
+        });
     }
 
     function renderVisitorsList(visitors) {
         const listContainer = document.getElementById('allVisitorsList');
         const threeMinutesAgo = new Date(Date.now() - 3 * 60 * 1000);
         listContainer.innerHTML = visitors.map(visitor => {
+            const uuid = visitor.visitor_uuid || visitor.id;
             const lastSeen = new Date(visitor.last_seen);
             const isOnline = lastSeen > threeMinutesAgo;
             const isBlocked = visitor.blocked_until && new Date(visitor.blocked_until) > new Date();
@@ -843,13 +956,13 @@
                         </div>
                     </div>
                     <div class="flex items-center space-x-2 flex-shrink-0 ml-2">
-                        <button onclick="openNameChangeExpiryModal('${visitor.visitor_uuid}')" title="Beri kesempatan ganti nama" class="bg-sky-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-sky-600 ${hasValidTicket ? 'opacity-50 cursor-not-allowed' : ''}" ${hasValidTicket ? 'disabled' : ''}>
+                        <button onclick="openNameChangeExpiryModal('${uuid}')" title="Beri kesempatan ganti nama" class="bg-sky-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-sky-600 ${hasValidTicket ? 'opacity-50 cursor-not-allowed' : ''}" ${hasValidTicket ? 'disabled' : ''}>
                             <i class="fas fa-gift"></i>
                         </button>
-                        <button onclick="openKickModal('${visitor.visitor_uuid}')" title="${isBlocked ? 'Ubah Durasi Blokir' : 'Blokir Pengunjung'}" class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-yellow-600">
+                        <button onclick="openKickModal('${uuid}')" title="${isBlocked ? 'Ubah Durasi Blokir' : 'Blokir Pengunjung'}" class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-yellow-600">
                             <i class="fas fa-user-clock"></i>
                         </button>
-                        ${isBlocked ? `<button onclick="unblockVisitor('${visitor.visitor_uuid}')" title="Buka Blokir" class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-green-600"><i class="fas fa-unlock"></i></button>` : ''}
+                        ${isBlocked ? `<button onclick="unblockVisitor('${uuid}')" title="Buka Blokir" class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold hover:bg-green-600"><i class="fas fa-unlock"></i></button>` : ''}
                     </div>
                 </div>
             </div>
@@ -864,18 +977,9 @@
         try {
             const now = new Date();
             const expiryDate = new Date(now.setDate(now.getDate() + durationInDays));
-            
-            // Cari record ID berdasarkan UUID
-            const record = await pb.collection('visitors').getFirstListItem(`visitor_uuid="${uuid}"`);
-            
-            await pb.collection('visitors').update(record.id, { 
-                name_change_expires_at: expiryDate.toISOString(),
-                name_change_granted: true
-            });
-            
+            await updateDoc(doc(db, 'visitors', uuid), { name_change_expires_at: expiryDate.toISOString() });
             showToast('Kesempatan ganti nama diberikan!', 'success');
             closeNameChangeExpiryModal();
-            loadAllVisitors();
         } catch (error) {
             showToast(`Gagal memberi izin: ${error.message}`, 'error');
         }
@@ -893,11 +997,8 @@
     async function unblockVisitor(uuid) {
         if (!confirm('Yakin ingin membuka blokir pengunjung ini? Mereka akan bisa langsung mengakses galeri lagi.')) return;
         try {
-            const record = await pb.collection('visitors').getFirstListItem(`visitor_uuid="${uuid}"`);
-            await pb.collection('visitors').update(record.id, { blocked_until: null });
-            
+            await updateDoc(doc(db, 'visitors', uuid), { blocked_until: null, kick_command: null });
             showToast('Blokir berhasil dibuka.', 'success');
-            loadAllVisitors();
         } catch (error) {
             showToast(`Gagal membuka blokir: ${error.message}`, 'error');
         }
@@ -916,34 +1017,21 @@
         document.getElementById('profileEmail').textContent = "karya@penulis.com";
         let storyCount = 0, recentStories = [], avgRating = "N/A", totalRatings = 0, totalViews = 0;
         try {
-            const records = await pb.collection('stories').getFullList({
-                sort: '-created',
-                filter: `user_id = "${currentUser ? currentUser.id : ''}"` // Filter by author
-            });
-            
-            storyCount = records.length;
-            recentStories = records.slice(0, 3).map(r => ({
-                ...r,
-                cover_url: getFileUrl(r, r.cover),
-                file_url: getFileUrl(r, r.file_pdf)
-            }));
-            
-            totalViews = records.reduce((sum, s) => sum + (s.view_count || 0), 0);
-            
-            // Rating logic sederhana (fetch all ratings)
-            // Note: Idealnya pakai aggregation query di backend, tapi di client-side PB basic:
-            const allRatingsRec = await pb.collection('ratings').getFullList();
-            const myStoryIds = records.map(s => s.id);
-            const myRatings = allRatingsRec.filter(r => myStoryIds.includes(r.story_id));
-            
-            totalRatings = myRatings.length;
-            if (totalRatings > 0) {
-                 avgRating = (myRatings.reduce((s, r) => s + r.rating, 0) / totalRatings).toFixed(1);
+            const stories = (await fetchAllStories()).sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+            storyCount = stories.length;
+            recentStories = stories.slice(0, 3);
+            totalViews = stories.reduce((sum, s) => sum + (s.view_count || 0), 0);
+            if (storyCount > 0) {
+                const ratingsSnap = await getDocs(collection(db, 'ratings'));
+                const storyIds = new Set(stories.map(s => s.id));
+                const ratings = ratingsSnap.docs.map(d => d.data()).filter(r => storyIds.has(r.story_id));
+                totalRatings = ratings.length;
+                if (totalRatings > 0) {
+                    avgRating = (ratings.reduce((s, r) => s + r.rating, 0) / totalRatings).toFixed(1);
+                }
             }
-
         } catch (error) {
-            console.error(error);
-            // showToast('Gagal memuat data profil penulis.', 'error');
+            showToast('Gagal memuat data profil penulis.', 'error');
         }
         document.getElementById('statStories').textContent = storyCount;
         document.getElementById('statRating').textContent = avgRating;
@@ -956,7 +1044,7 @@
                 const item = document.createElement('div');
                 item.className = 'flex items-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700';
                 item.onclick = () => openViewer(story);
-                item.innerHTML = `<i class="fas fa-file-alt text-violet-500 text-xl mr-4"></i><div><p class="font-semibold">${story.title}</p><p class="text-sm text-gray-500 dark:text-gray-400">${new Date(story.created).toLocaleDateString('id-ID')}</p></div>`;
+                item.innerHTML = `<i class="fas fa-file-alt text-violet-500 text-xl mr-4"></i><div><p class="font-semibold">${story.title}</p><p class="text-sm text-gray-500 dark:text-gray-400">${new Date(story.created_at).toLocaleDateString('id-ID')}</p></div>`;
                 recentContainer.appendChild(item);
             });
         } else {
@@ -964,36 +1052,10 @@
         }
     }
 
-    function escapeHtml(str) { if (typeof str !== 'string') return ''; return str.replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
-    
-    async function handleLogin(e) { 
-        e.preventDefault(); 
-        const form = e.target; 
-        const btn = form.querySelector('button[type="submit"]'); 
-        const { email, password } = Object.fromEntries(new FormData(form)); 
-        btn.disabled = true; 
-        try { 
-            await pb.collection('users').authWithPassword(email, password);
-            showToast(`🎉 Selamat datang kembali!`, 'success'); 
-            showPage('admin'); 
-            loadAdminStoryList(); 
-            loadAllVisitors();
-        } catch (error) { 
-            showToast(`Login gagal: ${error.message}`, 'error'); 
-        } finally { 
-            btn.disabled = false; 
-            form.reset(); 
-        } 
-    }
-    
-    async function logout() { 
-        pb.authStore.clear();
-        currentUser = null; 
-        updateUI(); 
-        showPage('home'); 
-        loadStoryCatalog(); 
-        showToast('Kamu berhasil keluar.', 'info'); 
-    }
+    function escapeHtml(str) { if (typeof str !== 'string') return ''; return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
+
+    async function handleLogin(e) { e.preventDefault(); const form = e.target; const btn = form.querySelector('button[type="submit"]'); const { email, password } = Object.fromEntries(new FormData(form)); btn.disabled = true; try { await signInWithEmailAndPassword(auth, email, password); currentUser = auth.currentUser; updateUI(); showToast(`🎉 Selamat datang kembali!`, 'success'); showPage('admin'); loadAdminStoryList(); loadAllVisitors(); } catch (error) { showToast(`Login gagal: ${error.message}`, 'error'); } finally { btn.disabled = false; form.reset(); } }
+    async function logout() { try { await signOut(auth); } catch (error) { showToast(`Logout Gagal: ${error.message}`, 'error'); return; } if (visitorsAdminUnsub) { visitorsAdminUnsub(); visitorsAdminUnsub = null; } currentUser = null; updateUI(); showPage('home'); loadStoryCatalog(); showToast('Kamu berhasil keluar.', 'info'); }
 
     function startHeartbeat() {
         if (heartbeatInterval) clearInterval(heartbeatInterval);
@@ -1004,36 +1066,19 @@
     async function updateVisitorStatus(extraData = {}) {
         if (!visitorUUID) return;
         try {
-            // Cek apakah visitor sudah ada
-            let record;
-            try {
-                record = await pb.collection('visitors').getFirstListItem(`visitor_uuid="${visitorUUID}"`);
-            } catch (err) {
-                if (err.status !== 404) throw err;
-            }
-
-            const payload = {
+            await setDoc(doc(db, 'visitors', visitorUUID), {
                 visitor_uuid: visitorUUID,
                 visitor_name: visitorName,
                 last_seen: new Date().toISOString(),
                 ...extraData
-            };
-
-            if (record) {
-                const updated = await pb.collection('visitors').update(record.id, payload);
-                if (updated.blocked_until && new Date(updated.blocked_until) > new Date()) {
-                    lockScreen(updated.blocked_until);
-                }
-            } else {
-                await pb.collection('visitors').create(payload);
-            }
+            }, { merge: true });
         } catch (error) {
             console.error("Gagal update status visitor:", error.message);
         }
     }
 
     function lockScreen(blockedUntilTimestamp) {
-        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        if (heartbeatInterval) { clearInterval(heartbeatInterval); heartbeatInterval = null; }
         const kickScreen = document.getElementById('kickScreen');
         const messageElement = kickScreen.querySelector('p');
         
@@ -1045,37 +1090,69 @@
         messageElement.innerHTML = `Admin telah membatasi akses Anda ke galeri ini.<br>Anda dapat mencoba kembali setelah: <strong class="text-yellow-400">${formattedDate}</strong>`;
         
         kickScreen.classList.remove('hidden');
+
+        if (lockTimeout) clearTimeout(lockTimeout);
+        const remaining = new Date(blockedUntilTimestamp).getTime() - Date.now();
+        if (remaining > 0 && remaining < 2147483647) {
+            lockTimeout = setTimeout(() => {
+                document.getElementById('kickScreen').classList.add('hidden');
+                document.getElementById('glitchScreen').classList.add('hidden');
+                if (!heartbeatInterval && visitorName) startHeartbeat();
+            }, remaining);
+        }
+    }
+
+    function unlockScreen() {
+        if (lockTimeout) { clearTimeout(lockTimeout); lockTimeout = null; }
+        document.getElementById('kickScreen').classList.add('hidden');
+    }
+
+    async function uploadToCloudinary(file, resourceType) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`, { method: 'POST', body: formData });
+        const result = await response.json();
+        if (!response.ok || !result.secure_url) throw new Error((result.error && result.error.message) || 'Upload ke Cloudinary gagal');
+        return result.secure_url;
     }
 
     async function handleUpload(e) {
         e.preventDefault();
         if (!currentUser) return;
-        const btn = document.getElementById('uploadSubmitBtn');
-        btn.disabled = true;
-
-        const formData = new FormData();
-        const title = document.getElementById('storyTitle').value;
-        const category = document.getElementById('storyCategory').value;
-        const description = document.getElementById('storyDescription').value;
-        const coverFile = document.getElementById('coverFile').files[0];
+        const form = e.target;
+        const btn = form.querySelector('button[type="submit"]');
+        const spinner = document.getElementById('uploadSpinner');
+        const { storyTitle, storyDescription, storyCategory } = Object.fromEntries(new FormData(form));
         const storyFile = document.getElementById('storyFile').files[0];
-
-        formData.append('title', title);
-        formData.append('category', category);
-        formData.append('description', description);
-        if(coverFile) formData.append('cover', coverFile);
-        formData.append('file_pdf', storyFile);
-        formData.append('user_id', currentUser.id);
-
+        if (!storyFile || storyFile.size === 0) return showToast('File PDF jangan lupa dipilih!', 'error');
+        btn.disabled = true;
+        spinner.classList.remove('hidden');
         try {
-            await pb.collection('stories').create(formData);
+            let coverUrl = null;
+            const coverFile = document.getElementById('coverFile').files[0];
+            if (coverFile && coverFile.size > 0) {
+                coverUrl = await uploadToCloudinary(coverFile, 'image');
+            }
+            const fileUrl = await uploadToCloudinary(storyFile, 'raw');
+            await addDoc(collection(db, 'stories'), {
+                title: storyTitle,
+                description: storyDescription,
+                category: storyCategory,
+                cover_url: coverUrl,
+                file_url: fileUrl,
+                user_id: currentUser.uid,
+                view_count: 0,
+                created_at: new Date().toISOString()
+            });
             showToast('Karya berhasil dipublikasikan! ✨', 'success');
-            e.target.reset();
+            form.reset();
             await Promise.all([loadStoryCatalog(), loadAdminStoryList()]);
         } catch (error) {
             showToast(`Upload gagal: ${error.message}`, 'error');
         } finally {
             btn.disabled = false;
+            spinner.classList.add('hidden');
         }
     }
     
@@ -1089,53 +1166,57 @@
         paginationControls.innerHTML = '';
 
         try {
-            const searchTerm = document.getElementById('searchInput').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const selectedCategory = document.querySelector('.category-btn.active').dataset.category;
             const sortBy = document.getElementById('sortOptions').value;
 
-            let filterExpr = [];
-            if (selectedCategory !== 'Semua') filterExpr.push(`category = "${selectedCategory}"`);
-            if (searchTerm) filterExpr.push(`title ~ "${searchTerm}"`);
-            
-            let sortExpr = '-created';
-            if (sortBy === 'popular') sortExpr = '-view_count';
-            // Rating sort skipped for basic PB
+            const [allStories, likesSnap, ratingsSnap] = await Promise.all([
+                fetchAllStories(),
+                getDocs(collection(db, 'likes')),
+                getDocs(collection(db, 'ratings'))
+            ]);
 
-            const resultList = await pb.collection('stories').getList(currentPage, storiesPerPage, {
-                filter: filterExpr.join(' && '),
-                sort: sortExpr
-            });
-            
-            const stories = resultList.items.map(record => ({
-                ...record,
-                id: record.id,
-                cover_url: getFileUrl(record, record.cover),
-                file_url: getFileUrl(record, record.file_pdf)
-            }));
-
-            // Fetch likes & ratings logic (Simplified for PB)
-            const { totalItems: totalStories } = resultList;
-            
-            // Get all likes/ratings to sync UI (Not efficient for huge DBs but OK for simple app)
-            const likesRecords = await pb.collection('likes').getFullList();
-            allLikes = likesRecords;
+            allLikes = likesSnap.docs.map(d => d.data());
             userLikes.clear();
-            if(visitorUUID) {
+            if (visitorUUID) {
                 allLikes.filter(l => l.visitor_uuid === visitorUUID).forEach(l => userLikes.add(l.story_id));
             }
             updateLikesBadge();
 
-            const ratingsRecords = await pb.collection('ratings').getFullList();
-            allRatings = ratingsRecords;
+            allRatings = ratingsSnap.docs.map(d => d.data());
             userRatings.clear();
-            if(visitorUUID) {
-                 allRatings.filter(r => r.visitor_uuid === visitorUUID).forEach(r => userRatings.set(r.story_id, r.rating));
+            if (visitorUUID) {
+                allRatings.filter(r => r.visitor_uuid === visitorUUID).forEach(r => userRatings.set(r.story_id, r.rating));
             }
 
-            if (!stories.length) {
+            let stories = allStories;
+            if (selectedCategory !== 'Semua') {
+                stories = stories.filter(s => s.category === selectedCategory);
+            }
+            if (searchTerm) {
+                stories = stories.filter(s => (s.title || '').toLowerCase().includes(searchTerm));
+            }
+
+            if (sortBy === 'newest') {
+                stories.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+            } else if (sortBy === 'popular') {
+                stories.sort((a, b) => (b.view_count || 0) - (a.view_count || 0));
+            } else if (sortBy === 'rating') {
+                const stats = new Map(stories.map(s => [s.id, getRatingStats(s.id)]));
+                stories.sort((a, b) => {
+                    const sa = stats.get(a.id), sb = stats.get(b.id);
+                    return (sb.avg - sa.avg) || (sb.total - sa.total);
+                });
+            }
+
+            const totalStories = stories.length;
+            const from = (currentPage - 1) * storiesPerPage;
+            const pageStories = stories.slice(from, from + storiesPerPage);
+            
+            if (!pageStories.length) {
                 document.getElementById('emptyState').classList.remove('hidden');
             } else {
-                catalog.innerHTML = stories.map(createStoryCard).join('');
+                catalog.innerHTML = pageStories.map(createStoryCard).join('');
                 addCardEventListeners();
                 renderPaginationControls(totalStories);
             }
@@ -1194,8 +1275,7 @@
     }
     
     function createStoryCard(story) {
-        const storyRatings = allRatings.filter(r => r.story_id === story.id);
-        const avgRating = storyRatings.length ? storyRatings.reduce((sum, r) => sum + r.rating, 0) / storyRatings.length : 0;
+        const { avg: avgRating } = getRatingStats(story.id);
         const userRating = userRatings.get(story.id) || 0;
         
         let starsHtml = Array.from({length: 5}, (_, i) => `<i class="rating-star fa-star text-xl ${i < userRating ? 'fas text-yellow-400' : 'far text-gray-400'}" data-value="${i + 1}"></i>`).join('');
@@ -1238,125 +1318,28 @@
 
     async function handleSetRating(storyId, ratingValue) { 
         try { 
-            // Cek existing rating
-            const existing = allRatings.find(r => r.story_id === storyId && r.visitor_uuid === visitorUUID);
-            if (existing) {
-                 await pb.collection('ratings').update(existing.id, { rating: ratingValue });
-                 existing.rating = ratingValue;
-            } else {
-                 const newRec = await pb.collection('ratings').create({ story_id: storyId, visitor_uuid: visitorUUID, rating: ratingValue });
-                 allRatings.push(newRec);
-            }
-            
+            await setDoc(doc(db, 'ratings', `${storyId}_${visitorUUID}`), { story_id: storyId, visitor_uuid: visitorUUID, rating: ratingValue, updated_at: new Date().toISOString() }, { merge: true }); 
             showToast(`Kamu memberi ${ratingValue} bintang!`, 'success'); 
             userRatings.set(storyId, ratingValue); 
-            redrawCardLikes(storyId); 
+            const idx = allRatings.findIndex(r => r.story_id === storyId && r.visitor_uuid === visitorUUID); 
+            if (idx > -1) allRatings[idx].rating = ratingValue; 
+            else allRatings.push({ story_id: storyId, visitor_uuid: visitorUUID, rating: ratingValue }); 
+            redrawStoryCard(storyId); 
         } catch (error) { 
             showToast(`Gagal menyimpan rating: ${error.message}`, 'error'); 
         } 
     }
-    
-    async function handleLikeClick(storyId) {
-        if (!visitorUUID || !visitorName || visitorName === 'Guest') {
-            return showToast('Masukkan nama dulu untuk menyukai karya!', 'warning');
-        }
-        
-        const likeBtn = document.querySelector(`.like-btn[data-story-id='${storyId}']`);
-        if(likeBtn) likeBtn.disabled = true;
 
-        try {
-            const existing = allLikes.find(l => l.story_id === storyId && l.visitor_uuid === visitorUUID);
-
-            if (existing) {
-                await pb.collection('likes').delete(existing.id);
-                userLikes.delete(storyId);
-                allLikes = allLikes.filter(l => l.id !== existing.id);
-            } else {
-                const newLike = await pb.collection('likes').create({ story_id: storyId, visitor_uuid: visitorUUID });
-                userLikes.add(storyId);
-                allLikes.push(newLike);
-            }
-            redrawCardLikes(storyId);
-            updateLikesBadge();
-        } catch(error) {
-            showToast(`Gagal: ${error.message}`, 'error');
-        } finally {
-            if(likeBtn) likeBtn.disabled = false;
-        }
-    }
-
-    function redrawCardLikes(storyId) {
+    function redrawStoryCard(storyId) {
+        const { avg } = getRatingStats(storyId);
+        const userRating = userRatings.get(storyId) || 0;
         document.querySelectorAll(`.story-card[data-story-id='${storyId}']`).forEach(card => {
-            const isLiked = userLikes.has(storyId);
-            const likeIcon = card.querySelector('.like-btn .fa-heart');
-            const likeCount = card.querySelector('.like-btn .like-count');
-            
-            if(likeIcon) likeIcon.className = `fa-heart text-lg ${isLiked ? 'fas text-red-500' : 'far'}`;
-            if(likeCount) likeCount.textContent = allLikes.filter(l => l.story_id === storyId).length;
-            
-            // Redraw stars too
-            const storyRatings = allRatings.filter(r => r.story_id === storyId);
-            const avgRating = storyRatings.length ? storyRatings.reduce((sum, r) => sum + r.rating, 0) / storyRatings.length : 0;
-            const userRating = userRatings.get(storyId) || 0;
-            
-            let starsHtml = Array.from({length: 5}, (_, i) => `<i class="rating-star fa-star text-xl ${i < userRating ? 'fas text-yellow-400' : 'far text-gray-400'}" data-value="${i + 1}"></i>`).join('');
-            card.querySelector('.rating-stars').innerHTML = starsHtml;
-            card.querySelector('.rating-container .font-bold').textContent = avgRating.toFixed(1);
-            
-            // Reattach event listener for new star elements
-             card.querySelectorAll('.rating-star').forEach(star => {
-                star.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if (!visitorName || visitorName === 'Guest') return showToast('Masukkan nama di halaman utama untuk memberi rating!', 'warning');
-                    handleSetRating(storyId, parseInt(e.currentTarget.dataset.value));
-                });
+            card.querySelectorAll('.rating-star').forEach((star, i) => {
+                star.className = `rating-star fa-star text-xl ${i < userRating ? 'fas text-yellow-400' : 'far text-gray-400'}`;
             });
+            const avgEl = card.querySelector('.rating-container > span');
+            if (avgEl) avgEl.textContent = avg.toFixed(1);
         });
-    }
-
-    function updateLikesBadge() {
-        const badge = document.getElementById('likesCountBadge');
-        if (userLikes.size > 0) {
-            badge.textContent = userLikes.size;
-            badge.classList.remove('hidden');
-        } else {
-            badge.classList.add('hidden');
-        }
-    }
-
-    async function loadLikedStories() {
-        showPage('likes');
-        const catalog = document.getElementById('likedStoriesCatalog');
-        catalog.innerHTML = '<div class="text-center py-20 col-span-full"><div class="loading-spinner mx-auto"></div></div>';
-        document.getElementById('noLikedStories').classList.add('hidden');
-
-        const likedStoryIds = Array.from(userLikes);
-
-        if (likedStoryIds.length === 0) {
-            catalog.innerHTML = '';
-            document.getElementById('noLikedStories').classList.remove('hidden');
-            return;
-        }
-
-        try {
-            // Filter query manual karena "in" array di PB filter syntaxnya: id="x" || id="y"
-            const filterExpr = likedStoryIds.map(id => `id="${id}"`).join(' || ');
-            const resultList = await pb.collection('stories').getList(1, 100, {
-                filter: filterExpr
-            });
-            
-            const stories = resultList.items.map(r => ({
-                 ...r,
-                cover_url: getFileUrl(r, r.cover),
-                file_url: getFileUrl(r, r.file_pdf)
-            }));
-            
-            catalog.innerHTML = stories.map(createStoryCard).join('');
-            addCardEventListeners();
-        } catch (error) {
-            showToast(`Gagal memuat karya disukai: ${error.message}`, 'error');
-            catalog.innerHTML = '<p class="text-red-500 col-span-full">Gagal memuat daftar.</p>';
-        }
     }
     
     async function openViewer(story) {
@@ -1379,18 +1362,13 @@
         currentStoryId = story.id;
         showPage('viewer');
         await loadComments(story.id);
-        
-        // Increment View Count (Update PB Record)
-        try { 
-             await pb.collection('stories').update(story.id, {
-                 view_count: (story.view_count || 0) + 1
-             });
-        } catch (error) { console.error('Gagal menambah view count:', error.message); }
+        try { await updateDoc(doc(db, 'stories', story.id), { view_count: increment(1) }); } catch (error) { console.error('Gagal menambah view count:', error.message); }
     }
 
     async function loadComments(storyId, targetElementId = 'commentList') { 
         const list = document.getElementById(targetElementId);
         if (!list) return;
+        lastCommentsCtx = { storyId, targetElementId };
         const interactionSection = document.getElementById('interactionSection'); 
         if (!visitorName || visitorName === 'Guest') { 
             if(interactionSection) interactionSection.style.display = 'none'; 
@@ -1402,100 +1380,22 @@
         if(document.getElementById('visitorPrompt')) document.getElementById('visitorPrompt').style.display = 'none'; 
         list.innerHTML = '<div class="text-center text-gray-500 dark:text-gray-400">Memuat komentar...</div>'; 
         try { 
-            const records = await pb.collection('comments').getList(1, 50, {
-                filter: `story_id = "${storyId}"`,
-                sort: '-created'
-            });
-            
-            if (records.items.length === 0) { 
+            const snap = await getDocs(query(collection(db, 'comments'), where('story_id', '==', storyId)));
+            const data = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+            if (data.length === 0) { 
                 list.innerHTML = '<div class="text-center text-gray-500 dark:text-gray-400">Jadilah yang pertama berkomentar!</div>'; 
             } else { 
-                list.innerHTML = records.items.map(c => `<div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="flex justify-between items-center"><p class="font-semibold text-violet-800 dark:text-violet-400">${escapeHtml(c.visitor_name)}</p>${(visitorUUID === c.visitor_uuid || currentUser) ? `<button onclick="deleteComment('${c.id}')" class="text-xs text-red-500 hover:underline">Hapus</button>` : ''}</div><p class="text-gray-700 dark:text-gray-300 mt-1 whitespace-pre-wrap">${escapeHtml(c.content)}</p><p class="text-xs text-gray-400 mt-2 text-right">${new Date(c.created).toLocaleString('id-ID')}</p></div>`).join(''); 
+                list.innerHTML = data.map(c => `<div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg"><div class="flex justify-between items-center"><p class="font-semibold text-violet-800 dark:text-violet-400">${escapeHtml(c.visitor_name)}</p>${(visitorUUID === c.visitor_uuid || currentUser) ? `<button onclick="deleteComment('${c.id}')" class="text-xs text-red-500 hover:underline">Hapus</button>` : ''}</div><p class="text-gray-700 dark:text-gray-300 mt-1 whitespace-pre-wrap">${escapeHtml(c.content)}</p><p class="text-xs text-gray-400 mt-2 text-right">${new Date(c.created_at).toLocaleString('id-ID')}</p></div>`).join(''); 
             } 
         } catch (error) { 
             list.innerHTML = '<div class="text-center text-red-500">Gagal memuat komentar.</div>'; 
         } 
     }
+    async function handlePostComment(e) { e.preventDefault(); if (!visitorName || visitorName === 'Guest') return showToast('Masukkan nama dulu!', 'warning'); const content = document.getElementById('commentContent').value.trim(); if (!content) return; const btn = e.target.querySelector('button[type="submit"]'); btn.disabled = true; try { await addDoc(collection(db, 'comments'), { story_id: currentStoryId, visitor_uuid: visitorUUID, visitor_name: visitorName, content: content, created_at: new Date().toISOString() }); document.getElementById('commentContent').value = ''; await loadComments(currentStoryId); } catch (error) { showToast(`Gagal: ${error.message}`, 'error'); } finally { btn.disabled = false; } }
+    async function deleteComment(commentId) { if (!confirm('Yakin?')) return; try { await deleteDoc(doc(db, 'comments', commentId)); showToast('Komentar dihapus.', 'success'); if (lastCommentsCtx) loadComments(lastCommentsCtx.storyId, lastCommentsCtx.targetElementId); } catch (error) { showToast(`Gagal: ${error.message}`, 'error'); } }
     
-    async function handlePostComment(e) { 
-        e.preventDefault(); 
-        if (!visitorName || visitorName === 'Guest') return showToast('Masukkan nama dulu!', 'warning'); 
-        const content = document.getElementById('commentContent').value.trim(); 
-        if (!content) return; 
-        const btn = e.target.querySelector('button[type="submit"]'); 
-        btn.disabled = true; 
-        try { 
-            await pb.collection('comments').create({
-                story_id: currentStoryId,
-                visitor_uuid: visitorUUID,
-                visitor_name: visitorName,
-                content: content
-            });
-            document.getElementById('commentContent').value = ''; 
-            await loadComments(currentStoryId); 
-        } catch (error) { 
-            showToast(`Gagal: ${error.message}`, 'error'); 
-        } finally { 
-            btn.disabled = false; 
-        } 
-    }
-    
-    async function deleteComment(commentId) { 
-        if (!confirm('Yakin?')) return; 
-        try { 
-            await pb.collection('comments').delete(commentId);
-            showToast('Komentar dihapus.', 'success'); 
-            if(document.getElementById('viewerPage').classList.contains('hidden')) { 
-                // Refresh if in QuickView (need story Id, hacky workaround or reload)
-                // For simplicity just reload comment list if we can find storyId
-                 const activeCard = document.querySelector('.story-card'); // Limitation here in quickview logic
-            } else { 
-                loadComments(currentStoryId); 
-            } 
-        } catch (error) { 
-            showToast(`Gagal: ${error.message}`, 'error'); 
-        } 
-    }
-    
-    async function loadAdminStoryList() { 
-        const list = document.getElementById('adminStoryList'); 
-        list.innerHTML = '<div class="loading-spinner mx-auto"></div>'; 
-        try { 
-            const records = await pb.collection('stories').getFullList({
-                sort: '-created',
-                filter: `user_id = "${currentUser.id}"`
-            });
-            
-            list.innerHTML = ''; 
-            if (!records.length) { 
-                list.innerHTML = `<p class="text-center text-gray-500 py-4 bg-gray-50 dark:bg-gray-700 rounded-lg">Belum ada karya.</p>`; 
-                return; 
-            } 
-            records.forEach(story => { 
-                const item = document.createElement('div'); 
-                item.className = 'flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg'; 
-                const coverUrl = getFileUrl(story, story.cover);
-                const fileUrl = getFileUrl(story, story.file_pdf);
-                // Assign URLs to story object for viewer
-                story.cover_url = coverUrl;
-                story.file_url = fileUrl;
+    async function loadAdminStoryList() { const list = document.getElementById('adminStoryList'); list.innerHTML = '<div class="loading-spinner mx-auto"></div>'; try { const snap = await getDocs(query(collection(db, 'stories'), where('user_id', '==', currentUser.uid))); const data = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.created_at || '').localeCompare(a.created_at || '')); list.innerHTML = ''; if (!data.length) { list.innerHTML = `<p class="text-center text-gray-500 py-4 bg-gray-50 dark:bg-gray-700 rounded-lg">Belum ada karya.</p>`; return; } data.forEach(story => { const item = document.createElement('div'); item.className = 'flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg'; item.innerHTML = `<div class="flex items-center space-x-4 flex-1 overflow-hidden"><img src="${story.cover_url || 'https://placehold.co/40x40/6d28d9/ffffff?text=K'}" class="w-10 h-10 rounded object-cover flex-shrink-0"><div class="flex-1 overflow-hidden"><p class="font-semibold clamp-1" title="${escapeHtml(story.title)}">${story.title}</p><p class="text-xs text-gray-500 dark:text-gray-400">${story.category||'N/A'} &middot; ${new Date(story.created_at).toLocaleDateString('id-ID')}</p></div></div><div class="flex space-x-3 ml-4"><button class="view-btn text-blue-500 h-full">Lihat</button><button class="edit-btn text-green-500 h-full">Edit</button><button class="delete-btn text-red-500 h-full">Hapus</button></div>`; item.querySelector('.view-btn').addEventListener('click', () => openViewer(story)); item.querySelector('.edit-btn').addEventListener('click', () => openEditModal(story)); item.querySelector('.delete-btn').addEventListener('click', () => deleteStory(story.id)); list.appendChild(item); }); } catch (error) { list.innerHTML = `<p class="text-red-500">Gagal memuat daftar.</p>`; } }
 
-                item.innerHTML = `<div class="flex items-center space-x-4 flex-1 overflow-hidden"><img src="${coverUrl || 'https://placehold.co/40x40/6d28d9/ffffff?text=K'}" class="w-10 h-10 rounded object-cover flex-shrink-0"><div class="flex-1 overflow-hidden"><p class="font-semibold clamp-1" title="${escapeHtml(story.title)}">${story.title}</p><p class="text-xs text-gray-500 dark:text-gray-400">${story.category||'N/A'} &middot; ${new Date(story.created).toLocaleDateString('id-ID')}</p></div></div><div class="flex space-x-3 ml-4"><button class="view-btn text-blue-500 h-full">Lihat</button><button class="edit-btn text-green-500 h-full">Edit</button><button class="delete-btn text-red-500 h-full">Hapus</button></div>`; 
-                item.querySelector('.view-btn').addEventListener('click', () => openViewer(story)); 
-                item.querySelector('.edit-btn').addEventListener('click', () => openEditModal(story)); 
-                item.querySelector('.delete-btn').addEventListener('click', () => deleteStory(story.id)); 
-                list.appendChild(item); 
-            }); 
-        } catch (error) { 
-            list.innerHTML = `<p class="text-red-500">Gagal memuat daftar.</p>`; 
-        } 
-    }
-    
-    function openEditModal(story) { document.getElementById('editStoryId').value = story.id; document.getElementById('editStoryTitle').value = story.title; document.getElementById('editStoryDescription').value = story.description; document.getElementById('editStoryCategory').value = story.category || 'Lainnya'; document.getElementById('editModal').classList.remove('hidden'); }
-    async function handleUpdateStory(e) { e.preventDefault(); const storyId = document.getElementById('editStoryId').value; const form = e.target; const { editStoryTitle, editStoryDescription, editStoryCategory } = Object.fromEntries(new FormData(form)); try { await pb.collection('stories').update(storyId, { title: editStoryTitle, description: editStoryDescription, category: editStoryCategory }); showToast('Karya diperbarui!', 'success'); document.getElementById('editModal').classList.add('hidden'); await Promise.all([loadStoryCatalog(), loadAdminStoryList()]); } catch (error) { showToast(`Gagal: ${error.message}`, 'error'); } }
-    async function deleteStory(id) { if (!confirm(`Yakin?`)) return; try { await pb.collection('stories').delete(id); showToast('Karya dihapus.', 'success'); await Promise.all([loadStoryCatalog(), loadAdminStoryList()]); } catch(error) { showToast(`Gagal: ${error.message}`, 'error'); } }
-    
-    // Kick Feature (Broadcast simulation via DB update)
     function openKickMessageModal(uuid) {
         document.getElementById('kickWithMessageVisitorUUID').value = uuid;
         document.getElementById('kickMessageModal').classList.remove('hidden');
@@ -1510,25 +1410,15 @@
         const message = document.getElementById('kickMessageContent').value.trim();
         if (!uuid) return;
         try {
-            // Find visitor ID
-            const record = await pb.collection('visitors').getFirstListItem(`visitor_uuid="${uuid}"`);
-            
-            // Update blocked_until AND add a custom kick_message field if you added it to DB,
-            // otherwise just block.
-            // For now we just block to trigger the screen lock on client
-            const now = new Date();
-            const blockedUntil = new Date(now.getTime() + 5 * 60 * 1000); // 5 min default
-            
-            await pb.collection('visitors').update(record.id, { 
-                blocked_until: blockedUntil.toISOString() 
-                // kick_message: message // Uncomment if you added this field in Phase 2
+            const blockedUntil = new Date(Date.now() + 5 * 60 * 1000);
+            await updateDoc(doc(db, 'visitors', uuid), {
+                kick_command: { id: Date.now(), message: message || "Akses Anda telah diputus oleh admin." },
+                blocked_until: blockedUntil.toISOString()
             });
-
-            showToast('Pengunjung ditendang!', 'success');
+            showToast('Perintah tendang terkirim!', 'success');
             closeKickMessageModal();
-            loadAllVisitors();
         } catch (error) {
-            showToast(`Gagal: ${error.message}`, 'error');
+            showToast(`Gagal mengirim perintah: ${error.message}`, 'error');
         }
     }
 
@@ -1544,20 +1434,20 @@
     async function confirmKick(durationInMinutes) {
         const uuid = document.getElementById('kickVisitorUUID').value;
         if (!uuid) return;
-        const now = new Date();
-        const blockedUntil = new Date(now.getTime() + durationInMinutes * 60 * 1000);
+        const blockedUntil = new Date(Date.now() + durationInMinutes * 60 * 1000);
         try {
-            const record = await pb.collection('visitors').getFirstListItem(`visitor_uuid="${uuid}"`);
-            await pb.collection('visitors').update(record.id, { blocked_until: blockedUntil.toISOString() });
-            
+            await updateDoc(doc(db, 'visitors', uuid), { blocked_until: blockedUntil.toISOString() });
             showToast('Pengunjung berhasil diblokir sementara.', 'success');
             closeKickModal();
-            loadAllVisitors();
         } catch (error) {
             showToast(`Gagal memblokir: ${error.message}`, 'error');
         }
     }
 
+    function openEditModal(story) { document.getElementById('editStoryId').value = story.id; document.getElementById('editStoryTitle').value = story.title; document.getElementById('editStoryDescription').value = story.description || ''; document.getElementById('editStoryCategory').value = story.category || 'Lainnya'; document.getElementById('editModal').classList.remove('hidden'); }
+    async function handleUpdateStory(e) { e.preventDefault(); const storyId = document.getElementById('editStoryId').value; const form = e.target; const { editStoryTitle, editStoryDescription, editStoryCategory } = Object.fromEntries(new FormData(form)); try { await updateDoc(doc(db, 'stories', storyId), { title: editStoryTitle, description: editStoryDescription, category: editStoryCategory }); showToast('Karya diperbarui!', 'success'); document.getElementById('editModal').classList.add('hidden'); await Promise.all([loadStoryCatalog(), loadAdminStoryList()]); } catch (error) { showToast(`Gagal: ${error.message}`, 'error'); } }
+    async function deleteStory(id) { if (!confirm(`Yakin?`)) return; try { await deleteDoc(doc(db, 'stories', id)); showToast('Karya dihapus.', 'success'); await Promise.all([loadStoryCatalog(), loadAdminStoryList()]); } catch(error) { showToast(`Gagal: ${error.message}`, 'error'); } }
+    
     function showToast(message, type = 'info', duration = 3000) {
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toastMessage');
@@ -1584,7 +1474,83 @@
         }, duration);
     }
     
-    // Expose functions globally for HTML onclick attributes
+    function updateLikesBadge() {
+        const badge = document.getElementById('likesCountBadge');
+        if (userLikes.size > 0) {
+            badge.textContent = userLikes.size;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+
+    async function handleLikeClick(storyId) {
+        if (!visitorUUID || !visitorName || visitorName === 'Guest') {
+            return showToast('Masukkan nama dulu untuk menyukai karya!', 'warning');
+        }
+        
+        const isLiked = userLikes.has(storyId);
+        const likeBtn = document.querySelector(`.like-btn[data-story-id='${storyId}']`);
+        if(likeBtn) likeBtn.disabled = true;
+
+        try {
+            const likeRef = doc(db, 'likes', `${storyId}_${visitorUUID}`);
+            if (isLiked) {
+                await deleteDoc(likeRef);
+                userLikes.delete(storyId);
+                allLikes = allLikes.filter(l => !(l.story_id === storyId && l.visitor_uuid === visitorUUID));
+            } else {
+                await setDoc(likeRef, { story_id: storyId, visitor_uuid: visitorUUID, created_at: new Date().toISOString() });
+                userLikes.add(storyId);
+                allLikes.push({ story_id: storyId, visitor_uuid: visitorUUID });
+            }
+            redrawCardLikes(storyId);
+            updateLikesBadge();
+        } catch(error) {
+            showToast(`Gagal: ${error.message}`, 'error');
+        } finally {
+            if(likeBtn) likeBtn.disabled = false;
+        }
+    }
+
+    function redrawCardLikes(storyId) {
+        document.querySelectorAll(`.story-card[data-story-id='${storyId}']`).forEach(card => {
+            const isLiked = userLikes.has(storyId);
+            const likeIcon = card.querySelector('.like-btn .fa-heart');
+            const likeCount = card.querySelector('.like-btn .like-count');
+            
+            if(likeIcon) likeIcon.className = `fa-heart text-lg ${isLiked ? 'fas text-red-500' : 'far'}`;
+            if(likeCount) likeCount.textContent = allLikes.filter(l => l.story_id === storyId).length;
+        });
+    }
+
+    async function loadLikedStories() {
+        showPage('likes');
+        const catalog = document.getElementById('likedStoriesCatalog');
+        catalog.innerHTML = '<div class="text-center py-20 col-span-full"><div class="loading-spinner mx-auto"></div></div>';
+        document.getElementById('noLikedStories').classList.add('hidden');
+
+        if (userLikes.size === 0) {
+            catalog.innerHTML = '';
+            document.getElementById('noLikedStories').classList.remove('hidden');
+            return;
+        }
+
+        try {
+            const stories = (await fetchAllStories()).filter(s => userLikes.has(s.id));
+            if (!stories.length) {
+                catalog.innerHTML = '';
+                document.getElementById('noLikedStories').classList.remove('hidden');
+                return;
+            }
+            catalog.innerHTML = stories.map(createStoryCard).join('');
+            addCardEventListeners();
+        } catch (error) {
+            showToast(`Gagal memuat karya disukai: ${error.message}`, 'error');
+            catalog.innerHTML = '<p class="text-red-500 col-span-full">Gagal memuat daftar.</p>';
+        }
+    }
+    
     window.deleteComment = deleteComment;
     window.openKickModal = openKickModal;
     window.closeKickModal = closeKickModal;
