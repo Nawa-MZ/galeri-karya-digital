@@ -1134,7 +1134,7 @@
             if (coverFile && coverFile.size > 0) {
                 coverUrl = await uploadToCloudinary(coverFile, 'image');
             }
-            const fileUrl = await uploadToCloudinary(storyFile, 'auto');
+            const fileUrl = await uploadToCloudinary(storyFile, 'image');
             await addDoc(collection(db, 'stories'), {
                 title: storyTitle,
                 description: storyDescription,
